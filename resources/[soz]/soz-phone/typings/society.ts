@@ -4,6 +4,7 @@ export interface PreDBSociety {
     message: string;
     position: boolean;
     pedPosition?: string;
+    overrideIdentifier?: string;
 }
 
 export interface DBSocietyUpdate {
@@ -74,4 +75,5 @@ export const SocietyNumberList: SocietyNumber = {
     pawl: '555-PAWL',
     baun: '555-BAUN',
     ffs: '555-FFS',
+    mdr: '555-MDR',
 };

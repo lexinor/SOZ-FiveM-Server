@@ -8,7 +8,7 @@ CreateThread(function()
                 job = "lsmc",
                 canInteract = function(entity)
                     local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return PlayerData.job.onduty and not Player(target).state.isdead and not InsideSurgery
+                    return PlayerData.job.onduty and not Player(target).state.isdead
                 end,
                 action = function(entity)
                     QBCore.Functions.Progressbar("Soigner", "Appliquer un bandage..", 10000, false, true,
@@ -38,31 +38,22 @@ CreateThread(function()
                 job = "lsmc",
                 canInteract = function(entity)
                     local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return PlayerData.job.onduty and Player(target).state.isdead and not InsideSurgery
+                    return PlayerData.job.onduty and Player(target).state.isdead
                 end,
                 action = function(entity)
-                    TriggerServerEvent("lsmc:server:GetMort", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)))
-                    QBCore.Functions.Progressbar("Revive", "Vous réanimez la personne..", 10000, false, true,
-                                                 {
-                        disableMovement = true,
-                        disableCarMovement = true,
-                        disableMouse = false,
-                        disableCombat = true,
-                    }, {animDict = "mini@cpr@char_a@cpr_str", anim = "cpr_pumpchest"}, {}, {}, function()
-                        TriggerServerEvent("lsmc:server:remove", "bloodbag")
-                        TriggerServerEvent("lsmc:server:add", "used_bloodbag")
-                        TriggerServerEvent("lsmc:server:revive", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)))
-                        TriggerServerEvent("monitor:server:event", "job_lsmc_revive_bloodbag", {},
-                                           {
-                            target_source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)),
-                            position = GetEntityCoords(entity),
-                        }, true)
-                    end)
+                    TriggerEvent("soz-core:lsmc:reanimate", entity)
+                    TriggerServerEvent("lsmc:server:remove", "bloodbag")
+                    TriggerServerEvent("lsmc:server:add", "used_bloodbag")
+                    TriggerServerEvent("monitor:server:event", "job_lsmc_revive_bloodbag", {},
+                                       {
+                        target_source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)),
+                        position = GetEntityCoords(entity),
+                    }, true)
                 end,
                 item = "bloodbag",
             },
             {
-                label = "Réanimer",
+                label = "Utiliser Défibrilateur",
                 color = "lsmc",
                 icon = "c:ems/revive.png",
                 canInteract = function(entity)
@@ -70,21 +61,13 @@ CreateThread(function()
                     return Player(target).state.isdead
                 end,
                 action = function(entity)
-                    QBCore.Functions.Progressbar("Revive", "Vous réanimez la personne..", 10000, false, true,
-                                                 {
-                        disableMovement = true,
-                        disableCarMovement = true,
-                        disableMouse = false,
-                        disableCombat = true,
-                    }, {animDict = "mini@cpr@char_a@cpr_str", anim = "cpr_pumpchest"}, {}, {}, function()
-                        TriggerServerEvent("lsmc:server:remove", "defibrillator")
-                        TriggerServerEvent("lsmc:server:revive", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)))
-                        TriggerServerEvent("monitor:server:event", "job_lsmc_revive_defibrillator", {},
-                                           {
-                            target_source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)),
-                            position = GetEntityCoords(entity),
-                        }, true)
-                    end)
+                    TriggerEvent("soz-core:lsmc:reanimate", entity)
+                    TriggerServerEvent("lsmc:server:remove", "defibrillator")
+                    TriggerServerEvent("monitor:server:event", "job_lsmc_revive_defibrillator", {},
+                                       {
+                        target_source = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)),
+                        position = GetEntityCoords(entity),
+                    }, true)
                 end,
                 item = "defibrillator",
             },
@@ -95,7 +78,7 @@ CreateThread(function()
                 job = "lsmc",
                 canInteract = function(entity)
                     local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return PlayerData.job.onduty and not Player(target).state.isdead and not InsideSurgery
+                    return PlayerData.job.onduty and not Player(target).state.isdead
                 end,
                 action = function(entity)
                     QBCore.Functions.Progressbar("Take_Blood", "Vous faites une prise de sang...", 10000, false, true,
@@ -116,64 +99,6 @@ CreateThread(function()
                     end)
                 end,
                 item = "empty_bloodbag",
-            },
-            {
-                label = "Rehabiliter",
-                color = "lsmc",
-                icon = "c:ems/Rehabiliter.png",
-                job = "lsmc",
-                blackoutGlobal = true,
-                blackoutJob = "lsmc",
-                canInteract = function(entity)
-                    local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    IsItt = QBCore.Functions.TriggerRpc("lsmc:server:IsItt", target)
-                    Wait(50)
-                    return PlayerData.job.onduty and not Player(target).state.isdead and not InsideSurgery and InsideHopital and IsItt
-                end,
-                action = function(entity)
-                    TriggerServerEvent("lsmc:server:SetItt", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)))
-                end,
-            },
-            {
-                label = "Deshabiliter",
-                color = "lsmc",
-                icon = "c:ems/Deshabiliter.png",
-                job = "lsmc",
-                blackoutGlobal = true,
-                blackoutJob = "lsmc",
-                canInteract = function(entity)
-                    local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return PlayerData.job.onduty and not Player(target).state.isdead and not InsideSurgery and InsideHopital and not IsItt
-                end,
-                action = function(entity)
-                    TriggerServerEvent("lsmc:server:SetItt", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)))
-                end,
-            },
-            {
-                label = "Déshabiller",
-                color = "lsmc",
-                icon = "c:ems/desabhiller.png",
-                job = "lsmc",
-                canInteract = function(entity)
-                    local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return InsideHopital and not Player(target).state.isWearingPatientOutfit
-                end,
-                action = function(entity)
-                    TriggerServerEvent("lsmc:server:SetPatientOutfit", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)), true)
-                end,
-            },
-            {
-                label = "Rhabiller",
-                color = "lsmc",
-                icon = "c:ems/rhabiller.png",
-                job = "lsmc",
-                canInteract = function(entity)
-                    local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    return InsideHopital and Player(target).state.isWearingPatientOutfit
-                end,
-                action = function(entity)
-                    TriggerServerEvent("lsmc:server:SetPatientOutfit", GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity)), false)
-                end,
             },
         },
         distance = 2.5,

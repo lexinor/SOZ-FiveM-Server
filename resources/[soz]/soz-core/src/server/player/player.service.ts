@@ -28,11 +28,15 @@ export class PlayerService {
     public getPlayer(source: number): PlayerData | null {
         const player = this.QBCore.getPlayer(source);
 
-        if (null === player) {
+        if (!player) {
             return null;
         }
 
         return player.PlayerData;
+    }
+
+    public getPlayersSources(): number[] | null {
+        return this.QBCore.getPlayersSources();
     }
 
     public getPlayerJobAndGrade(source: number): [string, number] | null {
@@ -109,12 +113,20 @@ export class PlayerService {
         }
     }
 
+    public updatePlayerData(source: number): void {
+        const player = this.QBCore.getPlayer(source);
+
+        if (player) {
+            player.Functions.UpdatePlayerData();
+        }
+    }
+
     public incrementMetadata<K extends keyof PlayerMetadata>(
         source: number,
         key: K,
         value: number,
-        min = 0,
-        max: number | null = null
+        min: number,
+        max?: number
     ): number {
         const player = this.QBCore.getPlayer(source);
 
@@ -136,5 +148,19 @@ export class PlayerService {
         }
 
         return null;
+    }
+
+    public setJobDuty(source: number, onDuty: boolean): PlayerData | null {
+        const player = this.QBCore.getPlayer(source);
+
+        if (!player) {
+            return null;
+        }
+
+        player.Functions.SetJobDuty(onDuty);
+    }
+
+    public getSteamIdentifier(source: number): string {
+        return this.QBCore.getSteamIdentifier(source);
     }
 }

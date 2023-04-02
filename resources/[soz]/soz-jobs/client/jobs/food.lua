@@ -171,13 +171,6 @@ RegisterNetEvent("QBCore:Client:SetDuty", function(duty)
 end)
 
 ---
---- MENUS
----
-RegisterNetEvent("jobs:client:food:OpenCloakroomMenu", function(storageId)
-    SozJobCore.Functions.OpenCloakroomMenu(FoodJob.Menu, FoodConfig.Cloakroom, storageId)
-end)
-
----
 --- FARM
 ---
 AddEventHandler("soz-jobs:client:food-collect-ingredients", function()
@@ -290,7 +283,7 @@ FoodJob.Functions.CraftItem = function(itemId, item)
     for ingId, count in pairs(ingredients) do
         local ingredient = QBCore.Shared.Items[ingId]
         if ingredient == nil then
-            exports["soz-hud"]:DrawNotification("Ingérdient invalide", "error")
+            exports["soz-hud"]:DrawNotification("Ingrédient invalide", "error")
             return
         end
         local countInInv = FoodJob.Functions.GetItemCountFromInventory(ingId) or 0

@@ -2,7 +2,7 @@ import { Once, OnceStep } from '../../../core/decorators/event';
 import { Inject } from '../../../core/decorators/injectable';
 import { Provider } from '../../../core/decorators/provider';
 import { ServerEvent } from '../../../shared/event';
-import { InventoryItem, SewingRawMaterialItem } from '../../../shared/item';
+import { SewingRawMaterialItem } from '../../../shared/item';
 import { FabricMaterial, FfsConfig, Process } from '../../../shared/job/ffs';
 import { InventoryManager } from '../../inventory/inventory.manager';
 import { ItemService } from '../../item/item.service';
@@ -39,10 +39,7 @@ export class FightForStyleTransformProvider {
                 blackoutJob: 'ffs',
                 canInteract: () => {
                     for (const input of process.inputs) {
-                        const predicate = (item: InventoryItem) => {
-                            return item.name === input.id && item.amount >= input.amount;
-                        };
-                        if (!this.inventoryManager.findItem(predicate)) {
+                        if (!this.inventoryManager.hasEnoughItem(input.id, input.amount)) {
                             return false;
                         }
                     }

@@ -3,8 +3,9 @@ import React, { FunctionComponent, useCallback, useEffect, useRef, useState } fr
 import { InventoryItem } from '../../types/inventory';
 import style from './Item.module.css';
 import {CSS} from '@dnd-kit/utilities';
-import keyIcon from '/icon/key.png';
+import apartmentKeyIcon from '/icon/apartment_key.png';
 import moneyIcon from '/icon/money.png';
+import vehicleKeyIcon from '/icon/vehicle_key.png';
 import { clsx } from 'clsx';
 import { WeaponAmmo } from '../../types/weapon';
 import { createPortal } from 'react-dom';
@@ -30,7 +31,7 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
             container: containerName,
             item
         },
-        disabled: !!money || item?.disabled === true,
+        disabled: item?.disabled === true || money == -1,
     });
 
     const itemRef = useRef<HTMLDivElement>(null);
@@ -60,17 +61,22 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
             if (WeaponAmmo[item.name]) {
                 contextExtraLabel += ` Munition : ${WeaponAmmo[item.name]}`
             }
-        } else {
-            if (item?.metadata?.expiration) {
-                const currentTime = new Date().getTime();
-                const expiration = new Date(item.metadata['expiration'])
+        } else if (item?.metadata?.expiration) {
+            const currentTime = new Date().getTime();
+            const expiration = new Date(item.metadata['expiration'])
 
-                if (currentTime > expiration.getTime()) {
-                    itemExtraLabel += ` [Périmé]`
-                } else {
-                    itemExtraLabel += ` [DLC: ${expiration.toLocaleDateString('fr-FR', FORMAT_LOCALIZED)}]`
-                }
+            if (currentTime > expiration.getTime()) {
+                itemExtraLabel += ` [Périmé]`
+            } else {
+                itemExtraLabel += ` [DLC: ${expiration.toLocaleDateString('fr-FR', FORMAT_LOCALIZED)}]`
             }
+        }
+        else if (item?.metadata?.type && !item?.metadata?.label) {
+            itemExtraLabel += ` [${item?.metadata?.type}]`
+        }
+
+        if (item?.metadata?.crafted) {
+            itemExtraLabel += ` [Confection]`
         }
 
         if (item.illustrator && item.illustrator instanceof Object) {
@@ -120,6 +126,13 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
     const itemIcon = useCallback((item: InventoryItem) => {
         let path = item.name
 
+        if (item.name === 'vehicle_key') {
+            return vehicleKeyIcon;
+        }
+        if (item.name === 'apartment_key') {
+            return apartmentKeyIcon;
+        }
+
         if (item.name === 'outfit' || item.name === 'armor') {
             path += `_${item.metadata?.type}`
         } else if (item.name === 'cabinet_zkea') {
@@ -133,17 +146,30 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
         return null
     }
 
-    if (item && isDragging) {
-        return createPortal(
-            <DragOverlay className={style.Card}>
-                <img
-                alt=""
-                className={style.Icon}
-                src={item.type === 'key' ? keyIcon : itemIcon(item)}
-                onError={(e) => e.currentTarget.src = 'https://placekitten.com/200/200'}
-            />
-            </DragOverlay>, document.body
-        )
+    if (isDragging) {
+        if (item) {
+            return createPortal(
+                <DragOverlay className={style.Card}>
+                    <img
+                        alt=""
+                        className={style.Icon}
+                        src={itemIcon(item)}
+                        onError={(e) => e.currentTarget.src = 'https://placekitten.com/200/200'}
+                    />
+                </DragOverlay>, document.body
+            )
+        }
+        else if(money) {
+            return createPortal(
+                <DragOverlay className={style.Card}>
+                    <img
+                        alt=""
+                        className={style.Icon}
+                        src={moneyIcon}
+                />
+                </DragOverlay>, document.body
+            )
+        }
     }
 
     return (
@@ -174,7 +200,7 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
                         <img
                             alt=""
                             className={style.Icon}
-                            src={item.type === 'key' ? keyIcon : itemIcon(item)}
+                            src={itemIcon(item)}
                             onError={(e) => e.currentTarget.src = 'https://placekitten.com/200/200'}
                         />
                     </>

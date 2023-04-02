@@ -13,7 +13,7 @@ Config.Products["barber"] = {
             category = "Beard",
             label = "Barbe",
             overlay = "Hair",
-            components = {["BeardType"] = true, ["BeardColor"] = true},
+            components = {["BeardType"] = true, ["BeardColor"] = true, ["BeardOpacity"] = true},
             items = Config.CharacterComponentList.BeardMale,
         },
         {
@@ -26,6 +26,7 @@ Config.Products["barber"] = {
                 ["FullMakeupDefaultColor"] = true,
                 ["FullMakeupPrimaryColor"] = true,
                 ["FullMakeupSecondaryColor"] = true,
+                ["FullMakeupOpacity"] = true,
             },
             items = Config.CharacterComponentList.Makeup,
         },
@@ -44,7 +45,7 @@ Config.Products["barber"] = {
             category = "Blush",
             label = "Blush",
             overlay = "Makeup",
-            components = {["BlushType"] = true, ["BlushColor"] = true},
+            components = {["BlushType"] = true, ["BlushColor"] = true, ["BlushOpacity"] = true},
             items = Config.CharacterComponentList.Blush,
         },
         {
@@ -52,7 +53,7 @@ Config.Products["barber"] = {
             category = "Lipstick",
             label = "Rouge à lèvre",
             overlay = "Makeup",
-            components = {["LipstickType"] = true, ["LipstickColor"] = true},
+            components = {["LipstickType"] = true, ["LipstickColor"] = true, ["LipstickOpacity"] = true},
             items = Config.CharacterComponentList.Lipstick,
         },
         {
@@ -65,6 +66,7 @@ Config.Products["barber"] = {
                 ["FullMakeupDefaultColor"] = true,
                 ["FullMakeupPrimaryColor"] = true,
                 ["FullMakeupSecondaryColor"] = true,
+                ["FullMakeupOpacity"] = true,
             },
             items = Config.CharacterComponentList.Makeup,
         },
@@ -72,13 +74,13 @@ Config.Products["barber"] = {
 }
 
 Config.Locations["barber"] = {
-    vector4(-813.4, -181.86, 37.57, 126.21),
-    vector4(138.35, -1708.18, 29.3, 110.08),
-    vector4(1212.64, -474.02, 66.22, 42.01),
-    vector4(-278.59, 6227.0, 31.71, 23.14),
-    vector4(-1282.2, -1118.39, 7.0, 62.16),
-    vector4(1932.48, 3731.46, 32.85, 181.57),
-    vector4(-34.41, -152.48, 57.09, 327.14),
+    ["barber"] = vector4(-813.4, -181.86, 37.57, 126.21),
+    ["barber2"] = vector4(138.35, -1708.18, 29.3, 110.08),
+    ["barber3"] = vector4(1212.64, -474.02, 66.22, 42.01),
+    ["barber4"] = vector4(-278.59, 6227.0, 31.71, 23.14),
+    ["barber5"] = vector4(-1282.2, -1118.39, 7.0, 62.16),
+    ["barber6"] = vector4(1932.48, 3731.46, 32.85, 181.57),
+    ["barber7"] = vector4(-34.41, -152.48, 57.09, 327.14),
 }
 
 if not IsDuplicityVersion() then

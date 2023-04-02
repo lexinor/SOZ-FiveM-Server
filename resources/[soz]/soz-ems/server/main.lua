@@ -1,9 +1,5 @@
 QBCore = exports["qb-core"]:GetCoreObject()
 
-RegisterNetEvent("soz-ems:server:setLit", function(id, isUsed)
-    TriggerEvent("soz-ems:client:lit", -1, id, isUsed)
-end)
-
 RegisterServerEvent("lsmc:server:remove")
 AddEventHandler("lsmc:server:remove", function(item)
     local Player = QBCore.Functions.GetPlayer(tonumber(source))
@@ -14,17 +10,6 @@ RegisterServerEvent("lsmc:server:add")
 AddEventHandler("lsmc:server:add", function(item)
     local Player = QBCore.Functions.GetPlayer(tonumber(source))
     exports["soz-inventory"]:AddItem(Player.PlayerData.source, item, 1, nil)
-end)
-
-RegisterServerEvent("lsmc:server:revive")
-AddEventHandler("lsmc:server:revive", function(id)
-    local player = QBCore.Functions.GetPlayer(tonumber(id))
-    TriggerClientEvent("soz_ems:client:Revive", player.PlayerData.source)
-    player.Functions.SetMetaData("hunger", player.PlayerData.metadata["hunger"] + 30)
-    player.Functions.SetMetaData("thirst", player.PlayerData.metadata["thirst"] + 30)
-    player.Functions.SetMetaData("alcohol", player.PlayerData.metadata["alcohol"] - 50)
-    player.Functions.SetMetaData("isdead", false)
-    Player(player.PlayerData.source).state.isdead = false
 end)
 
 RegisterServerEvent("lsmc:server:heal")
@@ -75,30 +60,4 @@ AddEventHandler("lsmc:server:SetItt", function(id)
         TriggerClientEvent("hud:client:DrawNotification", Player.PlayerData.source, "Vous avez été mis en interdiction de travail temporaire")
         TriggerClientEvent("hud:client:DrawNotification", source, "Vous avez mis la personne en interdiction de travail temporaire")
     end
-end)
-
-RegisterServerEvent("lsmc:server:SetPatientOutfit", function(target, useOutfit)
-    local player = QBCore.Functions.GetPlayer(tonumber(target))
-    if not player then
-        return
-    end
-
-    Player(player.PlayerData.source).state.isWearingPatientOutfit = useOutfit
-
-    if useOutfit then
-        TriggerClientEvent("ems:client:applyPatientClothing", player.PlayerData.source)
-    else
-        TriggerClientEvent("ems:client:removePatientClothing", player.PlayerData.source)
-    end
-end)
-
-QBCore.Functions.CreateCallback("lsmc:server:IsItt", function(source, cb, id)
-    local Player = QBCore.Functions.GetPlayer(id)
-    local itt = Player.PlayerData.metadata["itt"]
-
-    if itt == nil then
-        itt = false
-    end
-
-    cb(itt)
 end)

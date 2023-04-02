@@ -1,4 +1,5 @@
-import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { NuiEvent } from '../../../shared/event';
 import { InventoryItem } from '../../../shared/item';
@@ -7,6 +8,7 @@ import { WEAPON_CUSTOM_PRICE, WeaponAttachment, WeaponComponentType } from '../.
 import { WeaponTintColor, WeaponTintColorChoiceItem } from '../../../shared/weapons/tint';
 import { WeaponConfiguration, WeaponsMenuData } from '../../../shared/weapons/weapon';
 import { fetchNui } from '../../fetch';
+import { RootState } from '../../store';
 import {
     MainMenu,
     Menu,
@@ -39,7 +41,7 @@ const GunSmithWeaponSubMenu: FunctionComponent<{
 
         if (configuration.attachments) {
             price += Object.values(configuration.attachments).reduce((acc, attachment) => {
-                if (attachment !== null && !Object.values(weapon.metadata.attachments || []).includes(attachment)) {
+                if (attachment && !Object.values(weapon.metadata.attachments || []).includes(attachment)) {
                     return acc + WEAPON_CUSTOM_PRICE.attachment;
                 }
                 return acc;
@@ -53,7 +55,7 @@ const GunSmithWeaponSubMenu: FunctionComponent<{
         if (configuration.repair) {
             price +=
                 WEAPON_CUSTOM_PRICE.repair *
-                Math.floor(100 - (weapon.metadata.health / weapon.metadata.maxHealth) * 100);
+                Math.floor(100 - ((weapon.metadata.health / weapon.metadata.maxHealth) * 100 || 0));
         }
 
         if (configuration.tint && configuration.tint !== weapon.metadata.tint) {
@@ -62,6 +64,10 @@ const GunSmithWeaponSubMenu: FunctionComponent<{
 
         return price;
     }, [configuration]);
+
+    useEffect(() => {
+        fetchNui(NuiEvent.GunSmithPreviewAnimation).catch(e => console.error(e));
+    }, []);
 
     return (
         <SubMenu id={`gunsmith_${submenu_id}`}>
@@ -82,20 +88,24 @@ const GunSmithWeaponSubMenu: FunctionComponent<{
                         setConfiguration(s => ({ ...s, repair }));
                     }}
                 >
-                    Réparer l'arme ({((weapon.metadata.health / weapon.metadata.maxHealth) * 100).toFixed(0)}%)
+                    Réparer l'arme ({((weapon.metadata.health / weapon.metadata.maxHealth) * 100 || 0).toFixed(0)}%)
                 </MenuItemCheckbox>
 
                 <MenuItemSelect
                     title="Tint"
                     distance={5}
                     onChange={async (_, tint) => {
-                        await fetchNui(NuiEvent.GunSmithPreviewTint, { slot: weapon.slot, tint: tint });
-                        setConfiguration(s => ({ ...s, tint }));
+                        setConfiguration(s => ({ ...s, tint: Number(tint) }));
+                        fetchNui(NuiEvent.GunSmithPreviewTint, { slot: weapon.slot, tint: Number(tint) }).catch(e =>
+                            console.error(e)
+                        );
                     }}
-                    value={weapon.metadata.tint ?? 0}
+                    value={(weapon.metadata.tint ?? 0).toString()}
                 >
-                    {Object.values(tint).map((tint, index) => (
-                        <MenuItemSelectOptionColor key={index} color={tint.color} label={tint.label} value={index} />
+                    {Object.entries(tint).map(([key, tint]) => (
+                        <p>
+                            <MenuItemSelectOptionColor key={key} color={tint.color} label={tint.label} value={key} />
+                        </p>
                     ))}
                 </MenuItemSelect>
 
@@ -152,7 +162,7 @@ const GunSmithWeaponSubMenu: FunctionComponent<{
                 <MenuItemButton
                     className="border-t border-white/50"
                     onConfirm={async () => {
-                        await fetchNui(NuiEvent.GunSmithApplyConfiguration, {
+                        fetchNui(NuiEvent.GunSmithApplyConfiguration, {
                             slot: weapon.slot,
                             ...configuration,
                         }).catch(e => console.error(e));
@@ -176,20 +186,24 @@ const MenuWeaponComponentSelect: FunctionComponent<{
     onUpdate?: (s) => void;
 }> = ({ onUpdate, label, type, weapon, attachments }) => {
     const options = attachments.filter(a => a.type === type);
+    const player = useSelector((state: RootState) => state.player);
 
     return (
         <MenuItemSelect
             title={label}
             onChange={async (_, attachment) => {
-                await fetchNui(NuiEvent.GunSmithPreviewAttachment, {
+                fetchNui(NuiEvent.GunSmithPreviewAttachment, {
                     slot: weapon.slot,
                     attachment: attachment,
                     attachmentList: options,
-                });
+                }).catch(e => console.error(e));
                 onUpdate?.(s => ({ ...s, attachments: { ...s.attachments, [type]: attachment } }));
             }}
             value={weapon.metadata?.attachments?.[type] ?? 0}
-            disabled={options.length === 0}
+            disabled={
+                options.length === 0 ||
+                (type === WeaponComponentType.Suppressor && player.role !== 'admin' && player.role !== 'staff')
+            }
         >
             <MenuItemSelectOption value={null}>Défaut</MenuItemSelectOption>
 

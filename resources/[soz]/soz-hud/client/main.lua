@@ -1,8 +1,9 @@
 QBCore = exports["qb-core"]:GetCoreObject()
 
 local HudForcedStateDisplay = true
-PlayerInVehicle, PlayerHaveGPS, PlayerHaveCompass = false, false, false
+PlayerInVehicle, PlayerHaveGPS, PlayerHaveCompass, AdminGPS = false, false, false, false
 HudDisplayed, HudRadar = false, true
+
 --- @class PlayerData
 local HudPlayerStatus = {
     --- @type boolean
@@ -65,8 +66,8 @@ end
 local function setHudRadar(state)
     if HudRadar ~= state then
         HudRadar = state
-        if PlayerHaveGPS then
-            DisplayRadar(HudRadar)
+        if PlayerHaveGPS or AdminGPS then
+            DisplayRadar(HudRadar or AdminGPS)
         else
             DisplayRadar(false)
         end
@@ -218,6 +219,10 @@ RegisterNetEvent("phone:camera:exit", function()
     HudForcedStateDisplay = true
     setHudDisplay(true)
 end)
+RegisterNetEvent("hud:client:admingps", function(newState)
+    AdminGPS = newState
+    setHudRadar(true)
+end)
 
 CreateThread(function()
     DisplayRadar(false)
@@ -244,7 +249,7 @@ CreateThread(function()
                 setVehicleData({
                     speed = math.ceil(actualspeed * Config.SpeedMultiplier),
                     fuel = condition.fuelLevel or GetVehicleFuelLevel(vehicle),
-                    hasFuel = class < 23,
+                    hasFuel = class < 23 and class ~= 13,
                     engine = math.ceil(GetVehicleEngineHealth(vehicle)),
                     oil = condition.oilLevel or 100,
                     lock = not Entity(vehicle).state.open,

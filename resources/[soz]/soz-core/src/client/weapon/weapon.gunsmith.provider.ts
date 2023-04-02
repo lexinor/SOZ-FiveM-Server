@@ -2,6 +2,7 @@ import { OnEvent, OnNuiEvent } from '../../core/decorators/event';
 import { Inject } from '../../core/decorators/injectable';
 import { Provider } from '../../core/decorators/provider';
 import { emitRpc } from '../../core/rpc';
+import { wait } from '../../core/utils';
 import { ClientEvent, NuiEvent } from '../../shared/event';
 import { MenuType } from '../../shared/nui/menu';
 import { Err, Ok } from '../../shared/result';
@@ -45,6 +46,13 @@ export class WeaponGunsmithProvider {
         const weapons = this.inventoryManager.getItems().filter(item => item.type === 'weapon');
         const coords = GetEntityCoords(PlayerPedId(), true);
 
+        if (weapons.length === 0) {
+            this.notifier.notify("Vous n'avez pas d'arme sur vous", 'info');
+            return;
+        }
+
+        await this.weaponService.clear();
+
         this.nuiMenu.openMenu(
             MenuType.GunSmith,
             {
@@ -72,15 +80,15 @@ export class WeaponGunsmithProvider {
     }
 
     @OnNuiEvent<{ menuType: MenuType }>(NuiEvent.MenuClosed)
-    public async resetSkin({ menuType }) {
+    public async resetGunSmith({ menuType }) {
         if (menuType !== MenuType.GunSmith) {
             return;
         }
 
-        this.animationService.stop();
+        this.animationService.purge();
         await this.weaponService.clear();
 
-        LocalPlayer.state.set('weapon_animation', false, true);
+        LocalPlayer.state.set('in_shop', false, true);
 
         const weapon = this.weaponService.getCurrentWeapon();
         if (weapon) {
@@ -226,8 +234,6 @@ export class WeaponGunsmithProvider {
             }
         }
 
-        this.nuiMenu.closeMenu();
-
         if (customValidated) {
             this.notifier.notify('Vos modifications ont été appliquées');
         } else {
@@ -237,11 +243,19 @@ export class WeaponGunsmithProvider {
             );
         }
 
-        await this.weaponService.clear();
+        this.nuiMenu.closeMenu(false);
     }
 
     private async setupAnimation() {
-        LocalPlayer.state.set('weapon_animation', true, true);
+        const player = PlayerPedId();
+        LocalPlayer.state.set('in_shop', true, true);
+
+        if (IsEntityPlayingAnim(player, 'missbigscore1guard_wait_rifle', 'wait_base', 3)) {
+            return;
+        }
+
+        this.animationService.purge();
+        await wait(300);
         await this.animationService.playAnimation(
             {
                 base: {

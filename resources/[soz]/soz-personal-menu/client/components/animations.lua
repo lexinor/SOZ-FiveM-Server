@@ -22,6 +22,28 @@ function cleanProps()
         prop2_net = nil
     end
 end
+
+function fixPositionOffset(heading, x, y, dx, dy)
+    if heading > 270 then
+        angle = math.abs(heading - 360)
+        y = y - dy * math.cos(math.rad(angle))
+        x = x - dx * math.sin(math.rad(angle))
+    elseif heading > 180 then
+        angle = heading - 180
+        y = y + dy * math.cos(math.rad(angle))
+        x = x - dx * math.sin(math.rad(angle))
+    elseif heading > 90 then
+        angle = math.abs(heading - 180)
+        y = y + dy * math.cos(math.rad(angle))
+        x = x + dx * math.sin(math.rad(angle))
+    else
+        angle = heading
+        y = y - dy * math.cos(math.rad(angle))
+        x = x + dx * math.sin(math.rad(angle))
+    end
+    return {x, y}
+end
+
 RegisterNetEvent("soz-personal-menu:cleanProps", function()
     cleanProps()
 end)
@@ -39,11 +61,12 @@ local PlayEmote = function(animation)
     local ped = PlayerPedId()
 
     if IsNuiFocused() or IsPedSittingInAnyVehicle(ped) or LocalPlayer.state.isEscorted or LocalPlayer.state.isEscorting or PlayerData.metadata["isdead"] or
-        PlayerData.metadata["ishandcuffed"] or PlayerData.metadata["inlaststand"] or exports["progressbar"]:IsDoingAction() then
+        PlayerData.metadata["ishandcuffed"] or PlayerData.metadata["inlaststand"] or exports["progressbar"]:IsDoingAction() or IsPedRagdoll(ped) then
         return
     end
 
     if animation.event then
+        cleanProps()
         TriggerEvent(animation.event)
         return
     end
@@ -100,6 +123,13 @@ local PlayEmote = function(animation)
                                      true)
                 prop2_net = modelSpawn
             end
+
+            CreateThread(function()
+                while IsEntityPlayingAnim(ped, animation[1], animation[2], 3) do
+                    Wait(500)
+                end
+                cleanProps()
+            end)
         end
     else
         if IsPedUsingScenario(ped, animation[2]) then
@@ -115,6 +145,7 @@ local PlayEmote = function(animation)
 
             if string.find(animation[2], "SEAT") then
                 z = z - 0.5
+                x, y = table.unpack(fixPositionOffset(heading, x, y, 0.5, 0.5))
             end
 
             TaskStartScenarioAtPosition(ped, animation[2], x, y, z, heading, -1, true, false)

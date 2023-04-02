@@ -5633,6 +5633,10 @@
                   <Name>COMPONENT_SMG_CLIP_02</Name>
                   <Default value="false" />
                 </Item>
+                <Item>
+                  <Name>COMPONENT_SMG_CLIP_03</Name>
+                  <Default value="false" />
+                </Item>
               </Components>
             </Item>
             <Item>
@@ -5645,10 +5649,10 @@
               </Components>
             </Item>
             <Item>
-              <AttachBone>WAPScop</AttachBone>
+              <AttachBone>WAPScop_2</AttachBone>
               <Components>
                 <Item>
-                  <Name>COMPONENT_AT_SCOPE_MACRO</Name>
+                  <Name>COMPONENT_AT_SCOPE_MACRO_02</Name>
                   <Default value="false" />
                 </Item>
               </Components>
@@ -8685,12 +8689,12 @@
           <NetworkPedDamageModifier value="1.000000" />
           <NetworkHeadShotPlayerDamageModifier value="1.000000" />
           <LockOnRange value="10.000000" />
-          <WeaponRange value="33.000000" />
+          <WeaponRange value="11.000000" />
           <BulletDirectionOffsetInDegrees value="0.000000" />
           <AiSoundRange value="5.000000" />
           <AiPotentialBlastEventRange value="-1.000000" />
-          <DamageFallOffRangeMin value="33.000000" />
-          <DamageFallOffRangeMax value="33.000000" />
+          <DamageFallOffRangeMin value="11.000000" />
+          <DamageFallOffRangeMax value="11.000000" />
           <DamageFallOffModifier value="0.300000" />
           <VehicleWeaponHash />
           <DefaultCameraHash>DEFAULT_THIRD_PERSON_PED_AIM_CAMERA</DefaultCameraHash>

@@ -6,10 +6,13 @@ import { SozRole } from '../../core/permissions';
 import { emitRpc } from '../../core/rpc';
 import { ClientEvent } from '../../shared/event';
 import { MenuType } from '../../shared/nui/menu';
+import { PlayerCharInfo } from '../../shared/player';
 import { RpcEvent } from '../../shared/rpc';
 import { ClothingService } from '../clothing/clothing.service';
 import { NuiMenu } from '../nui/nui.menu';
+import { VehicleConditionProvider } from '../vehicle/vehicle.condition.provider';
 import { AdminMenuDeveloperProvider } from './admin.menu.developer.provider';
+import { AdminMenuGameMasterProvider } from './admin.menu.game-master.provider';
 import { AdminMenuInteractiveProvider } from './admin.menu.interactive.provider';
 
 @Provider()
@@ -25,6 +28,12 @@ export class AdminMenuProvider {
 
     @Inject(AdminMenuDeveloperProvider)
     private adminMenuDeveloperProvider: AdminMenuDeveloperProvider;
+
+    @Inject(VehicleConditionProvider)
+    private vehicleConditionProvider: VehicleConditionProvider;
+
+    @Inject(AdminMenuGameMasterProvider)
+    private adminMenuGameMasterProvider: AdminMenuGameMasterProvider;
 
     @OnEvent(ClientEvent.ADMIN_OPEN_MENU)
     @Command('admin', {
@@ -49,16 +58,19 @@ export class AdminMenuProvider {
 
         const banner = 'https://nui-img/soz/menu_admin_' + permission;
         const ped = PlayerPedId();
+        const characters = await emitRpc<Record<string, PlayerCharInfo>>(RpcEvent.ADMIN_GET_CHARACTERS);
 
         this.nuiMenu.openMenu<MenuType.AdminMenu>(
             MenuType.AdminMenu,
             {
                 banner,
+                characters,
                 permission: permission as SozRole,
                 state: {
                     gameMaster: {
                         invisible: !IsEntityVisible(ped),
                         moneyCase: LocalPlayer.state.adminDisableMoneyCase || false,
+                        adminGPS: this.adminMenuGameMasterProvider.getAdminGPS(),
                     },
                     interactive: {
                         displayOwners: this.adminMenuInteractiveProvider.intervalHandlers.displayOwners !== null,
@@ -74,6 +86,9 @@ export class AdminMenuProvider {
                     developer: {
                         noClip: this.adminMenuDeveloperProvider.isIsNoClipMode(),
                         displayCoords: this.adminMenuDeveloperProvider.showCoordinatesInterval !== null,
+                    },
+                    vehicule: {
+                        noStall: this.vehicleConditionProvider.getAdminNoStall(),
                     },
                 },
             },

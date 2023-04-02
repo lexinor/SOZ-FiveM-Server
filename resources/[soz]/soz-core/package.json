@@ -1,7 +1,6 @@
 {
     "name": "soz-core",
     "version": "1.0.0",
-    "main": "index.js",
     "license": "MIT",
     "scripts": {
         "build-module": "webpack --mode production --config webpack.config.watch.js",
@@ -17,6 +16,7 @@
     },
     "devDependencies": {
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+        "@svgr/webpack": "^6.5.1",
         "@swc/core": "^1.2.204",
         "@types/node": "^18.0.0",
         "@types/react": "^18.0.14",
@@ -65,6 +65,8 @@
         "postcss": "^8.4.14",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-icons": "^4.4.0",
+        "react-node-to-string": "^0.1.1",
         "react-redux": "^8.0.4",
         "react-router-dom": "^6.3.0",
         "redux": "^4.2.0",

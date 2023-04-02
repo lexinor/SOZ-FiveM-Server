@@ -9,7 +9,7 @@ import { Feature, isFeatureEnabled } from '../../shared/features';
 import { PollutionLevel } from '../../shared/pollution';
 import { Forecast, Time, Weather } from '../../shared/weather';
 import { Pollution } from '../pollution';
-import { Halloween, Polluted, SpringAutumn } from './forecast';
+import { Polluted, SpringAutumn } from './forecast';
 
 const INCREMENT_SECOND = (3600 * 24) / (60 * 48);
 
@@ -27,7 +27,8 @@ export class WeatherProvider {
         GlobalState.blackout ||= false;
         GlobalState.blackout_level ||= 0;
         GlobalState.blackout_override = false;
-        GlobalState.weather ||= 'OVERCAST' as Weather;
+        GlobalState.weather ||= 'CLEAR' as Weather;
+        GlobalState.snow ||= false;
         GlobalState.time ||= { hour: 2, minute: 0, second: 0 } as Time;
     }
 
@@ -93,6 +94,11 @@ export class WeatherProvider {
         }
 
         this.setWeather(weatherString);
+    }
+
+    @Command('snow', { role: 'admin' })
+    setSnowCommand(source: number, needSnow?: string): void {
+        GlobalState.snow = needSnow === 'on' || needSnow === 'true';
     }
 
     public setWeather(weather: Weather): void {

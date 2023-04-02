@@ -1,3 +1,6 @@
+import { Rpc } from '@public/core/decorators/rpc';
+import { RpcEvent } from '@public/shared/rpc';
+
 import { OnEvent } from '../../core/decorators/event';
 import { Inject } from '../../core/decorators/injectable';
 import { Provider } from '../../core/decorators/provider';
@@ -22,19 +25,16 @@ export class AdminMenuPlayerProvider {
 
     @OnEvent(ServerEvent.ADMIN_SET_STAMINA)
     public onSetStamina(source: number, player: AdminPlayer, value: number) {
-        this.playerService.setPlayerMetadata(player.id, 'last_max_stamina_update', new Date().toUTCString());
         this.playerService.setPlayerMetadata(player.id, 'max_stamina', value);
     }
 
     @OnEvent(ServerEvent.ADMIN_SET_STRESS_LEVEL)
     public onSetStressLevel(source: number, player: AdminPlayer, value: number) {
-        this.playerService.setPlayerMetadata(player.id, 'last_stress_level_update', new Date().toUTCString());
         this.playerService.setPlayerMetadata(player.id, 'stress_level', value);
     }
 
     @OnEvent(ServerEvent.ADMIN_SET_STRENGTH)
     public onSetStrength(source: number, player: AdminPlayer, value: number) {
-        this.playerService.setPlayerMetadata(player.id, 'last_strength_update', new Date().toUTCString());
         this.playerService.setPlayerMetadata(player.id, 'strength', value);
         this.playerService.updatePlayerMaxWeight(player.id);
     }
@@ -62,9 +62,9 @@ export class AdminMenuPlayerProvider {
             let maxHealth = 200;
 
             if (newHealthLevel < 20) {
-                maxHealth = 120;
-            } else if (newHealthLevel < 40) {
                 maxHealth = 160;
+            } else if (newHealthLevel < 40) {
+                maxHealth = 180;
             }
 
             this.playerService.setPlayerMetadata(player.id, 'max_health', maxHealth);
@@ -88,5 +88,10 @@ export class AdminMenuPlayerProvider {
             `La progression du joueur ~b~Halloween ${year} (${scenario})~s~ a été réinitialisée.`,
             'info'
         );
+    }
+
+    @Rpc(RpcEvent.ADMIN_GET_REPUTATION)
+    public getReputation(source: number, target: number) {
+        return this.playerService.getPlayer(target).metadata.criminal_reputation;
     }
 }

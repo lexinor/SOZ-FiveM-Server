@@ -40,8 +40,20 @@ export class LSMCCheckHealthProvider {
         TriggerServerEvent(ServerEvent.LSMC_BLOOD_FILL_FLASK, target);
     }
 
-    public doHealthCheck(entity: number) {
+    public async doHealthCheck(entity: number) {
         const target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity));
+        const { completed } = await this.progressService.progress(
+            'lsmc_health_check',
+            "Vous étudiez l'état de santé du patient...",
+            5000,
+            {
+                task: 'CODE_HUMAN_MEDIC_TEND_TO_DEAD',
+            }
+        );
+
+        if (!completed) {
+            return;
+        }
 
         TriggerServerEvent(ServerEvent.LSMC_HEALTH_CHECK, target);
     }
@@ -68,7 +80,7 @@ export class LSMCCheckHealthProvider {
                         `Valeur incorrecte, doit être entre ${HealthBookMinMax[field].min} et ${HealthBookMinMax[field].max}`
                     );
                 } else if (!HealthBookMinMax[field].max && number < HealthBookMinMax[field].min) {
-                    return Err(`Valeur incorrecte, doit être supérieur à ${HealthBookMinMax[field].min}`);
+                    return Err(`Valeur incorrecte, doit être supérieure à ${HealthBookMinMax[field].min}`);
                 }
 
                 return Ok(true);

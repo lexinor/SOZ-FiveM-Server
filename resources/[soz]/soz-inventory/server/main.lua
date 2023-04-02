@@ -3,6 +3,7 @@ SozJobCore = exports["soz-jobs"]:GetCoreObject()
 
 local Inventory = {}
 local Inventories = {}
+local SyncInventory = true
 
 setmetatable(Inventory, {
     __call = function(self, arg)
@@ -153,6 +154,13 @@ function Inventory.CalculateWeight(items)
     return weight
 end
 
+function Inventory.CalculateAvailableWeight(inv)
+    inv = Inventory(inv)
+    local weight = Inventory.CalculateWeight(inv.items)
+    local maxWeight = inv.maxWeight
+    return maxWeight - weight
+end
+
 function Inventory.SetMaxWeight(inv, weight)
     inv = Inventory(inv)
     if inv then
@@ -160,6 +168,14 @@ function Inventory.SetMaxWeight(inv, weight)
     end
 end
 exports("SetMaxWeight", Inventory.SetMaxWeight)
+
+function Inventory.SetHouseStashMaxWeightFromTier(inv, tier)
+    inv = Inventory("house_stash_" .. inv)
+    if inv then
+        inv.maxWeight = Config.StorageCapacity["house_stash"][tier].weight
+    end
+end
+exports("SetHouseStashMaxWeightFromTier", Inventory.SetHouseStashMaxWeightFromTier)
 
 function Inventory.SlotWeight(item, slot)
     local weight = item.weight * slot.amount
@@ -262,11 +278,13 @@ function Inventory.FilterItems(inv, invType)
     if invType then
         if inv.items ~= nil then
             for _, v in pairs(inv.items) do
-                local insertId = #items + 1
-                items[insertId] = table.deepclone(v)
+                if not (invType == "player" and inv.type == "player" and QBCore.Shared.Items[v.name]["not_searchable"]) then
+                    local insertId = #items + 1
+                    items[insertId] = table.deepclone(v)
 
-                if not _G.Container[invType]:ItemIsAllowed(v) then
-                    items[insertId].disabled = true
+                    if not _G.Container[invType]:ItemIsAllowed(v) then
+                        items[insertId].disabled = true
+                    end
                 end
             end
         end
@@ -405,6 +423,8 @@ function Inventory.AddItem(inv, item, amount, metadata, slot, cb)
     end
     if cb then
         cb(success, reason)
+    else
+        return success, reason
     end
 end
 RegisterNetEvent("inventory:server:AddItem", Inventory.AddItem)
@@ -426,24 +446,29 @@ end
 RegisterNetEvent("inventory:server:SetMetadata", Inventory.SetMetadata)
 exports("SetMetadata", Inventory.SetMetadata)
 
-function Inventory.RemoveItem(inv, item, amount, metadata, slot)
+function Inventory.RemoveItem(inv, item, amount, metadata, slot, allowMoreThanOwned)
     inv = Inventory(inv)
     if type(item) ~= "table" then
         item = QBCore.Shared.Items[item]
     end
     amount = math.floor(amount + 0.5)
     if item and amount > 0 then
-
         if metadata ~= nil then
             metadata = type(metadata) == "string" and {type = metadata} or metadata
         end
 
         local itemSlots, totalAmount = Inventory.GetItemSlots(inv, item, metadata)
         if amount > totalAmount then
+            if not allowMoreThanOwned then
+                return false
+            end
             amount = totalAmount
         end
         local removed, total, slots = 0, amount, {}
         if slot and itemSlots[slot] then
+            if itemSlots[slot] < amount then
+                return false
+            end
             removed = amount
             Inventory.SetSlot(inv, item, -amount, metadata, slot)
             slots[#slots + 1] = inv.items[slot] or slot
@@ -487,8 +512,9 @@ function Inventory.RemoveItem(inv, item, amount, metadata, slot)
             inv.changed = true
             _G.Container[inv.type]:SyncInventory(inv.id, inv.items)
         end
+        return removed
     end
-    return inv.changed
+    return false
 end
 RegisterNetEvent("inventory:server:RemoveItem", Inventory.RemoveItem)
 exports("RemoveItem", Inventory.RemoveItem)
@@ -572,6 +598,19 @@ function Inventory.TransfertItem(invSource, invTarget, item, amount, metadata, s
         end
     end
 
+    TriggerEvent("monitor:server:event", "inventory_transfer", {
+        inventory_id = invSource.id,
+        inventory_type = invSource.type,
+    }, {
+        source = invSource,
+        slot = slot,
+        item = item.name,
+        amount = amount,
+        metadata = metadata,
+        target = invTarget,
+        targetSlot = targetSlot,
+    })
+
     if Inventory.RemoveItem(invSource, item, amount, metadata, slot) then
         Inventory.AddItem(invTarget, item, amount, metadata, targetSlot, function(s, r)
             success, reason = s, r
@@ -581,12 +620,12 @@ function Inventory.TransfertItem(invSource, invTarget, item, amount, metadata, s
         _G.Container[invTarget.type]:SyncInventory(invTarget.id, invTarget.items)
     end
 
-    if invSource.type ~= "player" and #invSource.users > 1 then
+    if invSource.type ~= "player" and table.length(invSource.users) > 1 then
         for player, _ in pairs(invSource.users) do
             TriggerClientEvent("inventory:client:updateTargetStoragesState", player, invSource)
         end
     end
-    if invTarget.type ~= "player" and #invTarget.users > 1 then
+    if invTarget.type ~= "player" and table.length(invTarget.users) > 1 then
         for player, _ in pairs(invTarget.users) do
             TriggerClientEvent("inventory:client:updateTargetStoragesState", player, invTarget)
         end
@@ -649,7 +688,7 @@ function Inventory.SortInventoryAZ(inv, cb)
         _G.Container[inv.type]:SyncInventory(inv.id, inv.items)
         success = true
 
-        if inv.type ~= "player" and #inv.users > 1 then
+        if inv.type ~= "player" and table.length(inv.users) > 1 then
             for player, _ in pairs(inv.users) do
                 TriggerClientEvent("inventory:client:updateTargetStoragesState", player, inv)
             end
@@ -835,7 +874,11 @@ function GetOrCreateInventory(storageType, invID, ctx)
         targetInv = Inventory("house_stash_" .. invID)
 
         if targetInv == nil then
-            targetInv = Inventory.Create("house_stash_" .. invID, invID, storageType, storageConfig.slot, storageConfig.weight, invID)
+            local tier = 0
+            if ctx then
+                tier = ctx.apartmentTier
+            end
+            targetInv = Inventory.Create("house_stash_" .. invID, invID, storageType, storageConfig[tier].slot, storageConfig[tier].weight, invID)
         end
     elseif storageType == "house_fridge" then
         targetInv = Inventory("house_fridge_" .. invID)
@@ -871,11 +914,26 @@ RegisterNetEvent("inventory:DropPlayerInventory", function(playerID --[[PlayerDa
     Inventory.Remove(playerID)
 end)
 
+function getBinItems()
+    return {
+        ["metalscrap"] = math.random(0, 100) >= 90 and math.random(0, 1) or 0,
+        ["aluminum"] = math.random(0, 100) >= 90 and math.random(0, 2) or 0,
+        ["rubber"] = math.random(0, 100) >= 90 and math.random(0, 2) or 0,
+        ["rolex"] = math.random(0, 100) >= 95 and 1 or 0,
+        ["diamond_ring"] = math.random(0, 100) >= 95 and 1 or 0,
+        ["goldchain"] = math.random(0, 100) >= 95 and 1 or 0,
+        ["garbagebag"] = math.random(5, 20),
+    }
+end
+
 --- Loops
 local function purgeBinLoop()
     for _, inv in pairs(Inventories) do
         if inv.datastore and inv.type == "bin" then
-            Inventory.Remove(inv)
+            local items = getBinItems()
+            for item, amount in pairs(items) do
+                Inventory.AddItem(inv, item, amount)
+            end
         end
     end
 
@@ -883,6 +941,10 @@ local function purgeBinLoop()
 end
 
 local function saveInventories(loop)
+    if not SyncInventory then
+        return
+    end
+
     for _, inv in pairs(Inventories) do
         if not inv.datastore and inv.changed then
             if _G.Container[inv.type]:SaveInventory(inv.id, inv.owner, inv.items) then
@@ -915,6 +977,10 @@ AddEventHandler("onResourceStop", function(resource)
 end)
 
 exports("saveInventories", saveInventories)
+
+exports("stopSyncInventories", function()
+    SyncInventory = false
+end)
 
 _G.Inventory = Inventory
 _G.Container = {}

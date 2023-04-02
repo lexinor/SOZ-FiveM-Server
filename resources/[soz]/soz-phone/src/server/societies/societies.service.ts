@@ -58,6 +58,9 @@ class _SocietyService {
             reqObj.data.pedPosition = JSON.stringify({ x: playerX, y: playerY, z: playerZ });
         }
 
+        if (reqObj.data.overrideIdentifier) {
+            identifier = reqObj.data.overrideIdentifier;
+        }
         if (reqObj.data.anonymous) {
             identifier = `#${identifier}`;
         }
@@ -180,12 +183,16 @@ class _SocietyService {
                         emitNet(
                             'hud:client:DrawNotification',
                             player.source,
-                            "Votre ~b~appel~s~ vient d'être pris !",
+                            `Votre ~b~appel~s~ au ${societyMessage.conversation_id} vient d'être pris !`,
                             'info',
                             10000
                         );
                     }
                 }
+            }
+
+            if (societyMessage.source_phone.includes('#')) {
+                societyMessage.source_phone = '';
             }
 
             const players = await PlayerService.getPlayersFromSocietyNumber(identifier);

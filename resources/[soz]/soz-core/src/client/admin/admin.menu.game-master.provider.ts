@@ -4,11 +4,21 @@ import { Provider } from '../../core/decorators/provider';
 import { wait } from '../../core/utils';
 import { NuiEvent, ServerEvent } from '../../shared/event';
 import { Notifier } from '../notifier';
+import { InputService } from '../nui/input.service';
+import { NuiMenu } from '../nui/nui.menu';
 
 @Provider()
 export class AdminMenuGameMasterProvider {
     @Inject(Notifier)
     private notifier: Notifier;
+
+    @Inject(InputService)
+    private inputService: InputService;
+
+    @Inject(NuiMenu)
+    private nuiMenu: NuiMenu;
+
+    private adminGPS = false;
 
     @OnNuiEvent(NuiEvent.AdminGiveMoney)
     public async giveMoney(amount: number): Promise<void> {
@@ -18,7 +28,7 @@ export class AdminMenuGameMasterProvider {
 
     @OnNuiEvent(NuiEvent.AdminGiveMarkedMoney)
     public async giveMarkedMoney(amount: number): Promise<void> {
-        TriggerServerEvent(ServerEvent.ADMIN_GIVE_MONEY, 'marked', amount);
+        TriggerServerEvent(ServerEvent.ADMIN_GIVE_MONEY, 'marked_money', amount);
         this.notifier.notify(`Vous vous êtes donné ${amount}$ en argent sale.`, 'success');
     }
 
@@ -94,5 +104,49 @@ export class AdminMenuGameMasterProvider {
     @OnNuiEvent(NuiEvent.AdminMenuGameMasterUncuff)
     public async unCuff(): Promise<void> {
         TriggerServerEvent(ServerEvent.ADMIN_UNCUFF);
+    }
+
+    @OnNuiEvent(NuiEvent.AdminMenuGameMasterCreateNewCharacter)
+    public async createNewCharacter(): Promise<void> {
+        const firstName = await this.inputService.askInput({
+            maxCharacters: 30,
+            title: 'Prénom',
+            defaultValue: '',
+        });
+
+        if (!firstName) {
+            return;
+        }
+
+        await wait(100);
+
+        const lastName = await this.inputService.askInput({
+            maxCharacters: 30,
+            title: 'Nom',
+            defaultValue: '',
+        });
+
+        if (!lastName) {
+            return;
+        }
+
+        this.nuiMenu.closeAll();
+        TriggerServerEvent(ServerEvent.ADMIN_CREATE_CHARACTER, firstName, lastName);
+    }
+
+    @OnNuiEvent(NuiEvent.AdminMenuGameMasterSwitchCharacter)
+    public async switchCharacter(citizenId: string): Promise<void> {
+        this.nuiMenu.closeAll();
+        TriggerServerEvent(ServerEvent.ADMIN_SWITCH_CHARACTER, citizenId);
+    }
+
+    @OnNuiEvent(NuiEvent.AdminSetAdminGPS)
+    public async setAdminGPS(value: boolean): Promise<void> {
+        this.adminGPS = value;
+        TriggerEvent('hud:client:admingps', value);
+    }
+
+    public getAdminGPS() {
+        return this.adminGPS;
     }
 }

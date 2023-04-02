@@ -6,16 +6,18 @@ Config.OffShoreMaxWashAmount = math.random(50000, 150000)
 
 Config.DefaultAccountMoney = {["player"] = 5000, ["business"] = 200000}
 
+Config.HouseSafeTiers = {[0] = 10000, [1] = 20000, [2] = 40000, [3] = 60000, [4] = 100000}
+
 Config.ErrorMessage = {
     ["unknown"] = "Erreur de la banque !",
-    ["action_forbidden"] = "Vous n'avez pas de droit de faire cette action !",
+    ["action_forbidden"] = "Vous n'avez pas le droit de faire cette action !",
     ["invalid_account"] = "Le compte n'existe pas !",
     ["already_exist"] = "Le compte existe déjà !",
-    ["transfert_failed"] = "Le transfer a subis une erreur !",
+    ["transfert_failed"] = "Le transfert a subi une erreur !",
     ["no_account_money"] = "Le compte ne possède pas assez d'argent !",
     ["invalid_liquidity"] = "Liquidité insuffisante à ce terminal",
     ["max_widthdrawal_limit"] = "Vous ne pouvez pas retirer plus de ~b~$%s~s~ depuis ce terminal",
-    ["limit"] = "Limite de retait atteinte : max. ~b~$%i~s~ par tranche de %i minutes. ",
+    ["limit"] = "Limite de retrait atteinte : max. ~b~$%i~s~ par tranche de %i minutes. ",
     ["withdrawal_limit"] = "~b~$%i~s~ retirables.",
     ["time_limit"] = "Revenez dans ~b~%i minutes~s~.",
 }
@@ -23,17 +25,34 @@ Config.ErrorMessage = {
 Config.FarmAccountMoney = {
     ["bank_refill"] = {money = 10000000, marked_money = 0},
     ["bennys_reseller"] = {money = 100000000, marked_money = 0},
-    ["farm_bennys"] = {money = 100000, marked_money = 0},
-    ["farm_news"] = {money = 100000, marked_money = 0},
-    ["farm_stonk"] = {money = 100000, marked_money = 0},
-    ["farm_mtp"] = {money = 100000, marked_money = 0},
-    ["farm_garbage"] = {money = 100000, marked_money = 0},
-    ["farm_taxi"] = {money = 100000, marked_money = 0},
-    ["farm_food"] = {money = 100000, marked_money = 0},
-    ["farm_upw"] = {money = 100000, marked_money = 0},
-    ["farm_pawl"] = {money = 100000, marked_money = 0},
-    ["farm_baun"] = {money = 100000, marked_money = 0},
-    ["farm_ffs"] = {money = 100000, marked_money = 0},
+    ["farm_bennys"] = {money = 200000, marked_money = 0},
+    ["farm_news"] = {money = 200000, marked_money = 0},
+    ["farm_stonk"] = {money = 200000, marked_money = 0},
+    ["farm_mtp"] = {money = 200000, marked_money = 0},
+    ["farm_garbage"] = {money = 200000, marked_money = 0},
+    ["farm_taxi"] = {money = 200000, marked_money = 0},
+    ["farm_food"] = {money = 200000, marked_money = 0},
+    ["farm_upw"] = {money = 200000, marked_money = 0},
+    ["farm_pawl"] = {money = 200000, marked_money = 0},
+    ["farm_baun"] = {money = 200000, marked_money = 0},
+    ["farm_ffs"] = {money = 200000, marked_money = 0},
+}
+
+Config.SocietyTaxes = {
+    privateSociety = {
+        ["baun"] = {"baun", "safe_baun"},
+        ["bennys"] = {"bennys", "safe_bennys"},
+        ["ffs"] = {"ffs", "safe_ffs"},
+        ["food"] = {"food", "safe_food"},
+        ["garbage"] = {"garbage", "safe_garbage"},
+        ["news"] = {"news", "safe_news"},
+        ["oil"] = {"oil", "safe_oil"},
+        ["pawl"] = {"pawl", "safe_pawl"},
+        ["taxi"] = {"taxi", "safe_taxi"},
+        ["upw"] = {"upw", "safe_upw"},
+    },
+
+    taxRepartition = {["lspd"] = 30, ["bcso"] = 30, ["lsmc"] = 30, ["cash-transfer"] = 2, ["mdr"] = 8},
 }
 
 Config.SafeStorages = {
@@ -90,14 +109,14 @@ Config.SafeStorages = {
     ["safe_oil"] = {
         label = "Coffre MTP",
         owner = "oil",
-        position = vector3(-234.58, 6090.64, 31.76),
-        size = vec2(0.8, 1.25),
-        heading = 45,
-        offsetUpZ = 0.4,
-        offsetDownZ = 0.5,
+        position = vector3(-246.30, 6064.38, 40.57),
+        size = vec2(0.20, 0.95),
+        heading = 315,
+        offsetUpZ = 1.0,
+        offsetDownZ = 0.2,
     },
     ["safe_bennys"] = {
-        label = "Coffre Bennys",
+        label = "Coffre New Gahray",
         owner = "bennys",
         position = vector3(-204.6, -1333.11, 34.89),
         size = vec2(1.0, 2.5),
@@ -140,6 +159,13 @@ Config.SafeStorages = {
         heading = 0,
         minZ = 30.21,
         maxZ = 30.81,
+    },
+    ["safe_mdr"] = {
+        label = "Coffre Mandatory",
+        owner = "mdr",
+        position = vector3(-546.25, -200.29, 47.66),
+        size = vec2(1.0, 1.0),
+        heading = 30.0,
     },
 }
 

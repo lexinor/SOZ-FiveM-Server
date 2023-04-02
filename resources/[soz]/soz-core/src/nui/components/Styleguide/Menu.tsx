@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { CheckIcon } from '@heroicons/react/solid';
+import { useIsOverflow } from '@public/nui/hook/overflow';
 import {
     createDescendantContext,
     Descendant,
@@ -556,6 +557,8 @@ type MenuItemSelectProps = PropsWithChildren<{
     initialValue?: any;
     titleWidth?: number;
     description?: string;
+    useGrid?: boolean;
+    alignRight?: boolean;
     equalityFn?: (a: any, b: any) => boolean;
 }>;
 
@@ -573,25 +576,36 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
     initialValue,
     titleWidth = 40,
     description = null,
+    useGrid = false,
+    alignRight = false,
     equalityFn = (a, b) => a === b,
 }) => {
     const [descendants, setDescendants] = useDescendantsInit();
     const [activeOptionIndex, setActiveOptionIndex] = useState(0);
     const [activeValue, setActiveValue] = useState(value);
     const { setDescription } = useContext(MenuContext);
+    const overflowRef = useRef<HTMLDivElement>(null);
+    const [isTitleOverflow, setIsTitleOverflow] = useState(false);
+
+    useIsOverflow(overflowRef, setIsTitleOverflow);
 
     const onItemConfirm = useCallback(() => {
         onConfirm && onConfirm(activeOptionIndex, activeValue);
     }, [activeOptionIndex, onConfirm, activeValue]);
 
     const classNameContainer = cn('flex items-center', {
-        'justify-between': !showAllOptions,
+        'justify-between': !showAllOptions || useGrid,
     });
 
+    const classNameTitleContainer = cn('overflow-hidden flex');
     const classNameTitle = cn('pr-2 truncate');
+    const classNameTitleDefile = cn(
+        'inline-block whitespace-nowrap scroll-pl-[100%] scroll-pr-[2em] animate-defilement'
+    );
 
     const classNameList = cn({
-        'ml-4': showAllOptions,
+        'ml-4': showAllOptions && !alignRight,
+        'ml-auto': alignRight,
     });
 
     const itemSetDescription = useCallback(
@@ -633,12 +647,19 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
                     <div className="w-full">
                         <div className={classNameContainer}>
                             <h3
-                                className={classNameTitle}
+                                ref={overflowRef}
+                                className={isTitleOverflow ? classNameTitleContainer : classNameTitle}
                                 style={{
                                     width: showAllOptions ? 'auto' : `${titleWidth}%`,
                                 }}
                             >
-                                {title}
+                                {isTitleOverflow && (
+                                    <>
+                                        <span className={classNameTitleDefile}>{title}&nbsp;&nbsp;&nbsp;</span>
+                                        <span className={classNameTitleDefile}>{title}&nbsp;&nbsp;&nbsp;</span>
+                                    </>
+                                )}
+                                {!isTitleOverflow && title}
                             </h3>
                             <div
                                 className={classNameList}
@@ -647,7 +668,11 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
                                 }}
                             >
                                 <MenuSelectControls onChange={onChange} initialValue={initialValue}>
-                                    <ul className="flex">{children}</ul>
+                                    {useGrid ? (
+                                        <ul className="grid grid-cols-5 gap-2">{children}</ul>
+                                    ) : (
+                                        <ul className="flex">{children}</ul>
+                                    )}
                                 </MenuSelectControls>
                             </div>
                         </div>
@@ -795,6 +820,8 @@ type MenuItemSelectOptionProps = PropsWithChildren<{
     value?: any;
     description?: string;
     helper?: ReactNode;
+    useGrid?: boolean;
+    highlight?: boolean;
 }>;
 
 export const MenuItemSelectOption: FunctionComponent<MenuItemSelectOptionProps> = ({
@@ -825,6 +852,8 @@ export const MenuItemSelectOptionBox: FunctionComponent<MenuItemSelectOptionProp
     value = null,
     description = null,
     helper = null,
+    useGrid = false,
+    highlight = false,
 }) => {
     const [handleRefSet, show, selected, onClick, isInitialValue] = useSelectOption(
         value,
@@ -836,12 +865,16 @@ export const MenuItemSelectOptionBox: FunctionComponent<MenuItemSelectOptionProp
     return (
         <li
             ref={handleRefSet}
-            className={cn('border-2 rounded-sm p-2 truncate mr-2', {
+            className={cn('border-2 rounded-sm p-2 truncate', {
+                'mr-2': !useGrid,
                 hidden: !show,
                 'border-white': selected,
-                'border-white/20': !selected,
+                'border-white/20': !highlight && !selected,
+                'border-green-400': !selected && highlight,
                 'text-white': isInitialValue,
                 'text-white/50': !isInitialValue,
+                'text-green-400': !isInitialValue && highlight,
+                'grid place-content-center': useGrid,
             })}
             onClick={onClick}
         >

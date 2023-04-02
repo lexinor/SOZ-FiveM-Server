@@ -17,13 +17,8 @@ local function RedAlertEntity(menu, societyNumber)
             local coords = GetEntityCoords(ped)
             local street, _ = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
             if not (IsWarningMessageActive() and tonumber(GetWarningMessageTitleHash()) == 1246147334) then
-                TriggerEvent("police:client:RedCall")
-                TriggerServerEvent("phone:sendSocietyMessage", "phone:sendSocietyMessage:" .. QBCore.Shared.UuidV4(), {
-                    anonymous = false,
-                    number = societyNumber,
-                    message = ("Code Rouge !!! Un agent a besoin d'aide vers %s"):format(GetStreetNameFromHashKey(street)),
-                    position = true,
-                })
+                TriggerEvent("police:client:RedCall", societyNumber,
+                             ("Code Rouge !!! Un agent a besoin d'aide vers %s"):format(GetStreetNameFromHashKey(street)))
             end
         end,
     })
@@ -35,7 +30,7 @@ local function PropsEntity(menu)
         label = "Poser un objet",
         value = nil,
         values = {
-            {label = "Cone de circulation", value = {item = "cone", props = "prop_air_conelight", offset = -0.15}},
+            {label = "Cône de circulation", value = {item = "cone", props = "prop_air_conelight", offset = -0.15}},
             {label = "Barrière", value = {item = "police_barrier", props = "prop_barrier_work05"}},
             {label = "Herse", value = {item = "spike"}},
         },
@@ -104,20 +99,7 @@ local function RadarEntity(menu, job)
 
     radarItem:On("change", function(menu, value)
         menuState["radar"] = value
-        for radarID, radar in pairs(Config.Radars) do
-            if radar.station == job then
-                if not QBCore.Functions.GetBlip("police_radar_" .. radarID) then
-                    QBCore.Functions.CreateBlip("police_radar_" .. radarID, {
-                        name = "Radar",
-                        coords = radar.props,
-                        sprite = 184,
-                        scale = 0.5,
-                    })
-                end
-
-                QBCore.Functions.HideBlip("police_radar_" .. radarID, not value)
-            end
-        end
+        TriggerEvent("soz-core:client:radar:toggle-blip", value, job)
     end)
 end
 
@@ -251,7 +233,7 @@ PoliceJob.Functions.Menu.GenerateInvoiceMenu = function(job, targetPlayer)
             select = function()
                 local title = exports["soz-hud"]:Input("Titre", 200)
                 if title == nil or title == "" then
-                    exports["soz-hud"]:DrawNotification("Vous devez spécifier un title", "error")
+                    exports["soz-hud"]:DrawNotification("Vous devez spécifier un titre", "error")
                     return
                 end
 
@@ -356,7 +338,7 @@ PoliceJob.Functions.Menu.GenerateLicenseMenu = function(job, targetPlayer)
         local giveLicenseMenu = MenuV:InheritMenu(menu, {subtitle = "Attribuer un permis"})
 
         for license, value in pairs(playerLicenses) do
-            if type(value) == "number" and value >= 1 then
+            if type(value) == "number" and value >= 1 and Config.Licenses[license] then
                 local sliderPoints = {}
                 for i = 1, value do
                     sliderPoints[i] = {label = i .. " point" .. (i > 1 and "s" or ""), value = i}
@@ -368,7 +350,7 @@ PoliceJob.Functions.Menu.GenerateLicenseMenu = function(job, targetPlayer)
                     values = sliderPoints,
                     select = function(item)
                         local ped = PlayerPedId()
-                        QBCore.Functions.Progressbar("job:police:license", "Retrais de points en cours...", 5000, false, true,
+                        QBCore.Functions.Progressbar("job:police:license", "Retrait de points en cours...", 5000, false, true,
                                                      {
                             disableMovement = false,
                             disableCarMovement = true,
@@ -396,14 +378,14 @@ PoliceJob.Functions.Menu.GenerateLicenseMenu = function(job, targetPlayer)
                         menu:Close()
                     end,
                 })
-            elseif type(value) == "number" and value == 0 then
+            elseif type(value) == "number" and value == 0 and Config.Licenses[license] then
                 removePointMenu:AddButton({
                     label = Config.Licenses[license].label,
                     rightLabel = "Invalide",
                     value = nil,
                     disabled = true,
                 })
-            elseif type(value) == "boolean" and value then
+            elseif type(value) == "boolean" and value and Config.Licenses[license] then
                 removeLicenseMenu:AddConfirm({
                     label = Config.Licenses[license].label,
                     value = license,
@@ -437,7 +419,7 @@ PoliceJob.Functions.Menu.GenerateLicenseMenu = function(job, targetPlayer)
                         menu:Close()
                     end,
                 })
-            elseif type(value) == "boolean" and not value then
+            elseif type(value) == "boolean" and not value and Config.Licenses[license] then
                 removeLicenseMenu:AddButton({
                     label = Config.Licenses[license].label,
                     rightLabel = "Invalide",

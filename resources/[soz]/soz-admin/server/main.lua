@@ -156,7 +156,7 @@ RegisterNetEvent("admin:server:revive", function(player)
         return
     end
 
-    TriggerEvent("lsmc:server:revive", player.id)
+    TriggerEvent("soz-core:lsmc:server:revive", player.id, true)
 end)
 
 RegisterNetEvent("admin:server:ChangePlayer", function(citizenid)
@@ -202,4 +202,15 @@ RegisterNetEvent("admin:server:effect:normal", function(id)
     local player = QBCore.Functions.GetPlayer(id or source)
     player.Functions.SetMetaData("alcohol", 0)
     player.Functions.SetMetaData("drug", 0)
+end)
+
+RegisterNetEvent("admin:server:disease", function(id, action)
+    if not SozAdmin.Functions.IsPlayerAdmin(source) then
+        return
+    end
+
+    local player = QBCore.Functions.GetPlayer(id or source)
+    player.Functions.SetMetaData("disease", false);
+
+    TriggerClientEvent("lsmc:maladie:client:ApplyCurrentDiseaseEffect", id, action)
 end)

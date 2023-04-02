@@ -188,6 +188,44 @@ export enum WeaponName {
     HAZARDCAN = 'WEAPON_HAZARDCAN',
 }
 
+export enum ExtraWeaponName {
+    REMOTESNIPER = 'WEAPON_REMOTESNIPER',
+    ASSAULTSNIPER = 'WEAPON_ASSAULTSNIPER',
+
+    // Vehicle
+    TANK = 'VEHICLE_WEAPON_TANK',
+    SPACE_ROCKET = 'VEHICLE_WEAPON_SPACE_ROCKET',
+    PLAYER_LASER = 'VEHICLE_WEAPON_PLAYER_LASER',
+    ROCKET = 'WEAPON_VEHICLE_ROCKET',
+    DROWNING_IN_VEHICLE = 'WEAPON_DROWNING_IN_VEHICLE',
+    ROTORS = 'VEHICLE_WEAPON_ROTORS',
+    RAMMED_BY_CAR = 'WEAPON_RAMMED_BY_CAR',
+    RUN_OVER_BY_CAR = 'WEAPON_RUN_OVER_BY_CAR',
+    HELI_CRASH = 'WEAPON_HELI_CRASH',
+    FALL = 'WEAPON_FALL',
+    HIT_BY_WATER_CANNON = 'WEAPON_HIT_BY_WATER_CANNON',
+
+    WEAPON_PASSENGER_ROCKET = 'WEAPON_PASSENGER_ROCKET',
+    WEAPON_AIRSTRIKE_ROCKET = 'WEAPON_AIRSTRIKE_ROCKET',
+    WEAPON_STINGER = 'WEAPON_STINGER',
+    OBJECT = 'OBJECT',
+    AMMO_RPG = 'AMMO_RPG',
+    AMMO_TANK = 'AMMO_TANK',
+    AMMO_SPACE_ROCKET = 'AMMO_SPACE_ROCKET',
+    AMMO_PLAYER_LASER = 'AMMO_PLAYER_LASER',
+    AMMO_ENEMY_LASER = 'AMMO_ENEMY_LASER',
+    WEAPON_FIRE = 'WEAPON_FIRE',
+    WEAPON_EXHAUSTION = 'WEAPON_EXHAUSTION',
+    WEAPON_EXPLOSION = 'WEAPON_EXPLOSION',
+    WEAPON_ELECTRIC_FENCE = 'WEAPON_ELECTRIC_FENCE',
+    WEAPON_BLEEDING = 'WEAPON_BLEEDING',
+    WEAPON_DROWNING = 'WEAPON_DROWNING',
+    WEAPON_BARBED_WIRE = 'WEAPON_BARBED_WIRE',
+    WEAPON_AIR_DEFENCE_GUN = 'WEAPON_AIR_DEFENCE_GUN',
+    WEAPON_ANIMAL = 'WEAPON_ANIMAL',
+    WEAPON_COUGAR = 'WEAPON_COUGAR',
+}
+
 export const Weapons: Record<WeaponName, WeaponConfig> = {
     // Melee
     [WeaponName.BAT]: {
@@ -1017,3 +1055,19 @@ export const Weapons: Record<WeaponName, WeaponConfig> = {
     [WeaponName.FIREEXTINGUISHER]: { attachments: [] },
     [WeaponName.HAZARDCAN]: { attachments: [] },
 };
+
+export const GunShotMessage = [
+    "Un coup de feu vient d'être entendu proche de ${0}.",
+    'COUP DE FEU À ${0} !!!',
+    'Des coups de feu ont retenti dans la zone de ${0} !',
+    "AU SECOURS C'EST LA GUERRE, IL Y A DES COUPS DE FEU PROCHE DE ${0}.",
+    "Des bruits d'armes à feu à ${0} !",
+];
+
+export const ExplosionMessage = [
+    "Une explosion vient d'être entendue proche de ${0} !",
+    'Oskuuuur ! Gros boum à ${0} !!!',
+    "Heu, c'est normal les explosions à ${0} ?",
+    'Bordel ça explose de partout proche de ${0} !!',
+    "Une forte déflagration vient d'être ressentie à ${0}.",
+];

@@ -2,7 +2,6 @@ import { Once, OnceStep, OnEvent, OnNuiEvent } from '../../../core/decorators/ev
 import { Inject } from '../../../core/decorators/injectable';
 import { Provider } from '../../../core/decorators/provider';
 import { ClientEvent, NuiEvent } from '../../../shared/event';
-import { InventoryItem } from '../../../shared/item';
 import { FoodConfig, FoodCraftProcess, FoodRecipe } from '../../../shared/job/food';
 import { MenuType } from '../../../shared/nui/menu';
 import { BlipFactory } from '../../blip';
@@ -76,10 +75,7 @@ export class FoodProvider {
             const inputs = [];
             for (const input of craftProcess.inputs) {
                 const item = this.itemService.getItem(input.id);
-                const predicate = (item: InventoryItem) => {
-                    return item.name === input.id && item.amount >= input.amount && !this.itemService.isExpired(item);
-                };
-                const hasRequiredAmount = !!this.inventoryManager.findItem(predicate);
+                const hasRequiredAmount = !!this.inventoryManager.hasEnoughItem(input.id, input.amount, true);
                 inputs.push({
                     label: input.amount > 1 && item.pluralLabel ? item.pluralLabel : item.label,
                     hasRequiredAmount,

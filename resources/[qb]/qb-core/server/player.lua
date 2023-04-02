@@ -11,12 +11,12 @@ function QBCore.Player.Login(source, citizenid, newData)
         if citizenid then
             local license = QBCore.Functions.GetSozIdentifier(src)
             local PlayerData = exports.oxmysql:singleSync('SELECT * FROM player where citizenid = ?', { citizenid })
-            local apartment = exports.oxmysql:singleSync('SELECT label FROM housing_apartment where ? IN (owner, roommate)', { citizenid })
+            local apartment = exports.oxmysql:singleSync('SELECT id,property_id,label,price,owner,tier,has_parking_place FROM housing_apartment where ? IN (owner, roommate)', { citizenid })
             local role = GetConvar("soz_anonymous_default_role", "user")
             local account = QBCore.Functions.GetUserAccount(src)
 
             if account then
-                role = account.role
+                role = account.role:lower()
             end
 
             if PlayerData and (license == PlayerData.license or role == 'admin') then
@@ -31,6 +31,9 @@ function QBCore.Player.Login(source, citizenid, newData)
                 PlayerData.role = role
                 if apartment then
                     PlayerData.address = apartment.label
+                    PlayerData.apartment = apartment
+                else
+                    PlayerData.apartment = nil
                 end
 
                 if PlayerData.gang then
@@ -66,6 +69,10 @@ function QBCore.Player.CheckPlayerData(source, PlayerData)
     PlayerData.money = PlayerData.money or {}
     for moneytype, startamount in pairs(QBCore.Config.Money.MoneyTypes) do
         PlayerData.money[moneytype] = math.floor(PlayerData.money[moneytype] or startamount)
+    end
+    PlayerData.apartment = PlayerData.apartment or nil
+    if PlayerData.apartment then
+        PlayerData.apartment.tier = PlayerData.apartment.tier or 0
     end
     -- Charinfo
     PlayerData.charinfo = PlayerData.charinfo or {}
@@ -151,6 +158,7 @@ function QBCore.Player.CheckPlayerData(source, PlayerData)
         ['fishing'] = false,
         ['rescuer'] = false,
     }
+    PlayerData.metadata['vehiclelimit'] = PlayerData.metadata['vehiclelimit'] or 1
     PlayerData.metadata['inside'] = PlayerData.metadata['inside'] or {
         ['exitCoord'] = false,
         ['apartment'] = false,
@@ -159,6 +167,17 @@ function QBCore.Player.CheckPlayerData(source, PlayerData)
         SerialNumber = QBCore.Player.CreateSerialNumber(),
         InstalledApps = {},
     }
+
+    PlayerData.metadata['missive_count'] = PlayerData.metadata['missive_count'] or 0
+    PlayerData.metadata['criminal_talents'] = PlayerData.metadata['criminal_talents'] or {}
+    PlayerData.metadata['criminal_state'] = PlayerData.metadata['criminal_state'] or 0
+    PlayerData.metadata['criminal_reputation'] = PlayerData.metadata['criminal_reputation'] or 0
+
+    PlayerData.metadata['injuries_count'] = PlayerData.metadata['injuries_count'] or 0
+    PlayerData.metadata['injuries_date'] = PlayerData.metadata['injuries_date'] or 0
+
+    PlayerData.metadata['mort'] = PlayerData.metadata['mort'] or ''
+
     if not PlayerData.metadata.lastBidTime then
         PlayerData.metadata.canBid = true
     else
@@ -417,6 +436,12 @@ function QBCore.Player.CreatePlayer(PlayerData)
         local strengthMultiplier = self.PlayerData.metadata.strength / 100
         local baseWeight = 20000 * strengthMultiplier
 
+        for k, v in pairs(self.PlayerData.metadata["criminal_talents"]) do
+            if v == 20 then
+                baseWeight = baseWeight + 10000
+            end
+        end
+
         if (baseBag == 0 and jobBag == 0) or ((baseBag ~= 0 or jobBag ~= 0) and self.PlayerData.cloth_config.Config.HideBag) then
             exports["soz-inventory"]:SetMaxWeight(self.PlayerData.source, math.floor(baseWeight))
         else
@@ -456,6 +481,9 @@ function QBCore.Player.CreatePlayer(PlayerData)
 
         if not skipApply then
             TriggerClientEvent("soz-character:Client:ApplyCurrentClothConfig", self.PlayerData.source)
+            if Player(self.PlayerData.source).state.isWearingPatientOutfit then
+                Player(self.PlayerData.source).state.isWearingPatientOutfit = false
+            end
         end
 
         exports['soz-monitor']:Log('TRACE', 'Update player cloth config ' .. json.encode(config), { player = self.PlayerData })
@@ -514,6 +542,31 @@ function QBCore.Player.CreatePlayer(PlayerData)
             licences[licence] = tonumber(points)
             self.Functions.UpdatePlayerData()
         end
+    end
+
+    self.Functions.SetVehicleLimit = function (limit)
+        self.PlayerData.metadata.vehiclelimit = limit
+        self.Functions.UpdatePlayerData()
+    end
+
+    self.Functions.SetApartment = function(apartment)
+        if apartment then
+            self.PlayerData.address = apartment.label
+        else
+            self.PlayerData.address = ""
+        end
+        self.PlayerData.apartment = apartment
+        self.Functions.UpdatePlayerData()
+    end
+
+    self.Functions.SetApartmentTier = function(tier)
+        self.PlayerData.apartment.tier = tier
+        self.Functions.UpdatePlayerData()
+    end
+
+    self.Functions.SetApartmentHasParkingPlace = function(value)
+        self.PlayerData.apartment.has_parking_place = value
+        self.Functions.UpdatePlayerData()
     end
 
     self.Functions.Save = function()

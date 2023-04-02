@@ -14,69 +14,6 @@ Config.Blip = {
     },
 }
 
-Config.Cloakroom = {
-    [GetHashKey("mp_m_freemode_01")] = {
-        ["Tenue Bucheron"] = {
-            Components = {
-                [1] = {Palette = 0, Texture = 0, Drawable = 0},
-                [3] = {Palette = 0, Texture = 4, Drawable = 145},
-                [4] = {Palette = 0, Texture = 8, Drawable = 90},
-                [6] = {Palette = 0, Texture = 0, Drawable = 81},
-                [7] = {Palette = 0, Texture = 0, Drawable = 0},
-                [8] = {Palette = 0, Texture = 0, Drawable = 18},
-                [9] = {Palette = 0, Texture = 0, Drawable = 0},
-                [10] = {Palette = 0, Texture = 0, Drawable = 0},
-                [11] = {Palette = 0, Texture = 19, Drawable = 234},
-            },
-            Props = {},
-        },
-        ["Chef Bucheron"] = {
-            Components = {
-                [1] = {Palette = 0, Texture = 0, Drawable = 0},
-                [3] = {Palette = 0, Texture = 4, Drawable = 145},
-                [4] = {Palette = 0, Texture = 3, Drawable = 98},
-                [6] = {Palette = 0, Texture = 0, Drawable = 81},
-                [7] = {Palette = 0, Texture = 0, Drawable = 0},
-                [8] = {Palette = 0, Texture = 0, Drawable = 18},
-                [9] = {Palette = 0, Texture = 0, Drawable = 0},
-                [10] = {Palette = 0, Texture = 0, Drawable = 0},
-                [11] = {Palette = 0, Texture = 19, Drawable = 234},
-            },
-            Props = {},
-        },
-    },
-    [GetHashKey("mp_f_freemode_01")] = {
-        ["Tenue Bucheron"] = {
-            Components = {
-                [1] = {Texture = 0, Drawable = 0, Palette = 0},
-                [3] = {Texture = 4, Drawable = 179, Palette = 0},
-                [4] = {Texture = 8, Drawable = 93, Palette = 0},
-                [6] = {Texture = 0, Drawable = 86, Palette = 0},
-                [7] = {Texture = 0, Drawable = 0, Palette = 0},
-                [8] = {Texture = 20, Drawable = 0, Palette = 0},
-                [9] = {Texture = 0, Drawable = 0, Palette = 0},
-                [10] = {Texture = 0, Drawable = 0, Palette = 0},
-                [11] = {Texture = 19, Drawable = 244, Palette = 0},
-            },
-            Props = {},
-        },
-        ["Chef Bucheron"] = {
-            Components = {
-                [1] = {Texture = 0, Drawable = 0, Palette = 0},
-                [3] = {Texture = 4, Drawable = 179, Palette = 0},
-                [4] = {Texture = 3, Drawable = 101, Palette = 0},
-                [6] = {Texture = 0, Drawable = 86, Palette = 0},
-                [7] = {Texture = 0, Drawable = 0, Palette = 0},
-                [8] = {Texture = 20, Drawable = 2, Palette = 0},
-                [9] = {Texture = 0, Drawable = 0, Palette = 0},
-                [10] = {Texture = 0, Drawable = 0, Palette = 0},
-                [11] = {Texture = 19, Drawable = 244, Palette = 0},
-            },
-            Props = {},
-        },
-    },
-}
-
 Config.Harvest = {
     Duration = 30000,
     SapDuration = 8000,

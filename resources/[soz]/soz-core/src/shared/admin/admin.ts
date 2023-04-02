@@ -1,3 +1,5 @@
+import { PlayerCharInfo } from '@public/shared/player';
+
 import { SozRole } from '../../core/permissions';
 import { Component, Outfit, Prop } from '../cloth';
 
@@ -19,7 +21,7 @@ export const MOVEMENT_OPTIONS = [
 ];
 
 export const VOCAL_OPTIONS = [
-    { label: 'Status', value: 'status' },
+    { label: 'Statut', value: 'status' },
     { label: 'Muter', value: 'mute' },
     { label: 'Démuter', value: 'unmute' },
 ];
@@ -35,6 +37,7 @@ export const LICENCES = [
 export type GameMasterSubMenuState = {
     moneyCase: boolean;
     invisible: boolean;
+    adminGPS: boolean;
 };
 
 export type InteractiveSubMenuState = {
@@ -57,14 +60,20 @@ export type DeveloperSubMenuState = {
     displayCoords: boolean;
 };
 
+export type VehicleSubMenuState = {
+    noStall: boolean;
+};
+
 export type AdminMenuData = {
     banner: string;
     permission: SozRole;
+    characters: Record<string, PlayerCharInfo>;
     state: {
         gameMaster: GameMasterSubMenuState;
         interactive: InteractiveSubMenuState;
         skin: SkinSubMenuState;
         developer: DeveloperSubMenuState;
+        vehicule: VehicleSubMenuState;
     };
 };
 
@@ -78,6 +87,7 @@ export type AdminPlayer = {
     license: string;
     name: string;
     rpFullName: string;
+    injuries: number;
 };
 
 export type FullAdminPlayer = AdminPlayer & {

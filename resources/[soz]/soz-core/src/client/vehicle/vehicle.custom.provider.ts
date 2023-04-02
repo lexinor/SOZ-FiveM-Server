@@ -9,6 +9,7 @@ import { MultiZone } from '../../shared/polyzone/multi.zone';
 import { Vector3 } from '../../shared/polyzone/vector';
 import { RpcEvent } from '../../shared/rpc';
 import {
+    getVehicleConfigurationDiff,
     getVehicleCustomPrice,
     VehicleConfiguration,
     VehicleCustomMenuData,
@@ -125,13 +126,22 @@ export class VehicleCustomProvider {
         }
     }
 
-    @OnNuiEvent<{ vehicleEntityId: number; vehicleConfiguration: VehicleConfiguration }>(NuiEvent.VehicleCustomApply)
-    public async applyVehicleConfiguration({ vehicleEntityId, vehicleConfiguration }): Promise<VehicleUpgradeOptions> {
+    @OnNuiEvent<{
+        vehicleEntityId: number;
+        vehicleConfiguration: VehicleConfiguration;
+        originalConfiguration: VehicleConfiguration;
+    }>(NuiEvent.VehicleCustomApply)
+    public async applyVehicleConfiguration({
+        vehicleEntityId,
+        vehicleConfiguration,
+        originalConfiguration,
+    }): Promise<VehicleUpgradeOptions> {
         if (!vehicleEntityId || !vehicleConfiguration) {
             return null;
         }
 
-        this.vehicleModificationService.applyVehicleConfiguration(vehicleEntityId, vehicleConfiguration);
+        const diff = getVehicleConfigurationDiff(originalConfiguration, vehicleConfiguration);
+        this.vehicleModificationService.applyVehicleConfiguration(vehicleEntityId, diff);
 
         return this.vehicleModificationService.createOptions(vehicleEntityId);
     }
@@ -151,7 +161,7 @@ export class VehicleCustomProvider {
 
         if (usePricing && (!vehicle || !vehicle.price)) {
             this.notifier.notify(
-                "Cette voiture n'est pas enregistré auprès des autorités et ne peut donc pas être modifiée, veuillez prendre contact avec les autorités.",
+                "Ce véhicule n'est pas enregistré auprès des autorités et ne peut donc pas être modifié, veuillez prendre contact avec les autorités.",
                 'error'
             );
 
@@ -189,7 +199,7 @@ export class VehicleCustomProvider {
 
         if (!vehicle || !vehicle.price) {
             this.notifier.notify(
-                "Cette voiture n'est pas enregistré auprès des autorités et ne peut donc pas être modifiée, veuillez prendre contact avec les autorités.",
+                "Ce véhicule n'est pas enregistré auprès des autorités et ne peut donc pas être modifié, veuillez prendre contact avec les autorités.",
                 'error'
             );
 

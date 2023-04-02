@@ -22,6 +22,7 @@ SozJobCore.JobType = {
     Baun = "baun",
     Ffs = "ffs",
     Debug = "debug",
+    MDR = "mdr",
 }
 
 SozJobCore.JobPermission = {
@@ -34,7 +35,12 @@ SozJobCore.JobPermission = {
     SocietyBankInvoices = "society-bank-invoices",
     SocietyTakeOutPound = "society-take-out-pound",
     NewsManageArticle = "manage-article",
-    CashTransfer = {CollectBags = "collect-bags", ResaleBags = "resale-bags", FillIn = "fill-in"},
+    CashTransfer = {
+        CollectBags = "collect-bags",
+        ResaleBags = "resale-bags",
+        FillIn = "fill-in",
+        CollectSecure = "collect-secure",
+    },
     Food = {Harvest = "harvest", Craft = "craft"},
     Fueler = {ChangePrice = "fueler-change-price"},
     CriminalRecord = "criminal-record",
@@ -44,10 +50,16 @@ SozJobCore.JobPermission = {
     Baun = {Harvest = "harvest", Restock = "restock", Craft = "craft"},
     Ffs = {Harvest = "harvest", Restock = "restock", Craft = "craft"},
     Bennys = {Estimate = "estimate", Resell = "resell", Order = "order"},
+    Mdr = {ViewOtherJobs = "view-other-jobs", ViewCitizenData = "view-citizen-data"},
 }
 
 SozJobCore.Jobs = {
-    [SozJobCore.JobType.Unemployed] = {label = "Sans emploi", grades = {}, permissions = {}},
+    [SozJobCore.JobType.Unemployed] = {
+        label = "Sans emploi",
+        grades = {},
+        permissions = {},
+        canReceiveSocietyInvoice = false,
+    },
     [SozJobCore.JobType.Adsl] = {
         label = "ADSL",
         platePrefix = "ADSL",
@@ -67,6 +79,7 @@ SozJobCore.Jobs = {
         },
         grades = {},
         permissions = {},
+        canReceiveSocietyInvoice = false,
     },
     [SozJobCore.JobType.Delivery] = {
         label = "Fougère Prime",
@@ -84,6 +97,7 @@ SozJobCore.Jobs = {
         },
         grades = {},
         permissions = {},
+        canReceiveSocietyInvoice = false,
     },
     [SozJobCore.JobType.Religious] = {
         label = "InfoChat",
@@ -99,6 +113,7 @@ SozJobCore.Jobs = {
         },
         grades = {},
         permissions = {},
+        canReceiveSocietyInvoice = false,
     },
     [SozJobCore.JobType.Scrapper] = {
         label = "DeMetal Company",
@@ -116,6 +131,7 @@ SozJobCore.Jobs = {
         },
         grades = {},
         permissions = {},
+        canReceiveSocietyInvoice = false,
     },
     [SozJobCore.JobType.FBI] = {
         label = "Federal Bureau of Investigation",
@@ -125,6 +141,8 @@ SozJobCore.Jobs = {
         permissions = {
             [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
         },
+        phone = "555-FBI",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.LSPD] = {
         label = "Los Santos Police Department",
@@ -141,8 +159,8 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
             [SozJobCore.JobPermission.SocietyShop] = {label = "Accès aux magasins de société"},
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
-            [SozJobCore.JobPermission.CriminalRecord] = {label = "Accès aux casiers judiciaire"},
-            [SozJobCore.JobPermission.VehicleRegistrar] = {label = "Accès aux registre des véhicules"},
+            [SozJobCore.JobPermission.CriminalRecord] = {label = "Accès aux casiers judiciaires"},
+            [SozJobCore.JobPermission.VehicleRegistrar] = {label = "Accès au registre des véhicules"},
             [SozJobCore.JobPermission.Investigation] = {label = "Accès aux enquêtes"},
             [SozJobCore.JobPermission.ManageInvestigation] = {label = "Gérer les enquêtes"},
         },
@@ -159,6 +177,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-LSPD",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.BCSO] = {
         label = "Blaine County Sheriff Office",
@@ -175,8 +195,8 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
             [SozJobCore.JobPermission.SocietyShop] = {label = "Accès aux magasins de société"},
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
-            [SozJobCore.JobPermission.CriminalRecord] = {label = "Accès aux casiers judiciaire"},
-            [SozJobCore.JobPermission.VehicleRegistrar] = {label = "Accès aux registre des véhicules"},
+            [SozJobCore.JobPermission.CriminalRecord] = {label = "Accès aux casiers judiciaires"},
+            [SozJobCore.JobPermission.VehicleRegistrar] = {label = "Accès au registre des véhicules"},
             [SozJobCore.JobPermission.Investigation] = {label = "Accès aux enquêtes"},
             [SozJobCore.JobPermission.ManageInvestigation] = {label = "Gérer les enquêtes"},
         },
@@ -193,6 +213,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-BCSO",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.LSMC] = {
         label = "Los Santos Medical Center",
@@ -223,6 +245,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-LSMC",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Taxi] = {
         label = "Carl Jr Services",
@@ -252,6 +276,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-CARLJR",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Food] = {
         label = "Château Marius",
@@ -290,6 +316,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-MARIUS",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.News] = {
         label = "Twitch News",
@@ -321,6 +349,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-NEWS",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Garbage] = {
         label = "BlueBird",
@@ -350,6 +380,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-BLUEBIRD",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Oil] = {
         label = "Michel Transport Petrol",
@@ -365,21 +397,23 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.SocietyPrivateStorage] = {label = "Accès aux stockages société privés"},
             [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
-            [SozJobCore.JobPermission.Fueler.ChangePrice] = {label = "Changer le prix des stations publique"},
+            [SozJobCore.JobPermission.Fueler.ChangePrice] = {label = "Changer le prix des stations publiques"},
         },
         bossZones = {
             {
-                x = -237.14,
-                y = 6093.98,
-                z = 32.26,
-                sx = 9.0,
-                sy = 7.6,
-                heading = 45,
-                minZ = 31.26,
-                maxZ = 35.26,
+                x = -242.74,
+                y = 6070.52,
+                z = 40.61,
+                sx = 13.40,
+                sy = 4.60,
+                heading = 315,
+                minZ = 39.61,
+                maxZ = 42.61,
                 debugPoly = false,
             },
         },
+        phone = "555-MTP",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.CashTransfer] = {
         label = "STONK Depository",
@@ -399,6 +433,7 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.CashTransfer.FillIn] = {label = "Remplir banque / ATM"},
             [SozJobCore.JobPermission.SocietyShop] = {label = "Accès aux magasins de société"},
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
+            [SozJobCore.JobPermission.CashTransfer.CollectSecure] = {label = "Collecte des containers sécurisés"},
         },
         bossZones = {
             {
@@ -413,6 +448,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-STONK",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Bennys] = {
         label = "New Gahray",
@@ -445,6 +482,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-NEWGAHRAY",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Upw] = {
         label = "Unexpected Power & Water",
@@ -474,6 +513,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-UPW",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Pawl] = {
         label = "Pipe And Wooden Leg",
@@ -513,6 +554,8 @@ SozJobCore.Jobs = {
                 debugPoly = false,
             },
         },
+        phone = "555-PAWL",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Baun] = {
         label = "Bahama Unicorn",
@@ -537,6 +580,8 @@ SozJobCore.Jobs = {
             {x = 96.11, y = -1292.08, z = 29.27, sx = 7.2, sy = 6.2, heading = 300, minZ = 28.27, maxZ = 32.27},
             {x = -1387.87, y = -631.19, z = 30.81, sx = 5.4, sy = 6.4, heading = 303, minZ = 29.81, maxZ = 33.81},
         },
+        phone = "555-BAUN",
+        canReceiveSocietyInvoice = true,
     },
     [SozJobCore.JobType.Ffs] = {
         label = "Fight For Style",
@@ -557,8 +602,38 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
         },
         bossZones = {{x = 706.83, y = -965.59, z = 30.41, sx = 6.0, sy = 6.0, heading = 0, minZ = 29.41, maxZ = 33.41}},
+        phone = "555-FFS",
+        canReceiveSocietyInvoice = true,
     },
-    [SozJobCore.JobType.Debug] = {label = "Debug job", grades = {}, permissions = {}},
+    [SozJobCore.JobType.MDR] = {
+        label = "Mandatory",
+        platePrefix = "MDR",
+        grades = {},
+        permissions = {
+            [SozJobCore.JobPermission.Enrollment] = {label = "Gestion des recrutements"},
+            [SozJobCore.JobPermission.ManageGrade] = {label = "Gestion des grades"},
+            [SozJobCore.JobPermission.SocietyBankAccount] = {label = "Accès au compte société"},
+            [SozJobCore.JobPermission.SocietyBankInvoices] = {label = "Accès aux outils de facturation société"},
+            [SozJobCore.JobPermission.SocietyPrivateStorage] = {label = "Accès aux stockages société privés"},
+            [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
+            [SozJobCore.JobPermission.SocietyShop] = {label = "Accès aux magasins de société"},
+            [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
+            [SozJobCore.JobPermission.CriminalRecord] = {label = "Accès aux casiers judiciaire"},
+            [SozJobCore.JobPermission.VehicleRegistrar] = {label = "Accès aux registre des véhicules"},
+            [SozJobCore.JobPermission.Investigation] = {label = "Accès aux enquêtes"},
+            [SozJobCore.JobPermission.ManageInvestigation] = {label = "Gérer les enquêtes"},
+            [SozJobCore.JobPermission.Mdr.ViewOtherJobs] = {label = "Accès aux infos des entreprises"},
+            [SozJobCore.JobPermission.Mdr.ViewCitizenData] = {label = "Accès aux infos des citoyens"},
+        },
+        bossZones = {
+            {x = -546.36, y = -201.78, z = 47.66, sx = 8.0, sy = 17.0, heading = 30.0, minZ = 46.66, maxZ = 49.66},
+        },
+        menuCallback = "soz-jobs:client:mdr:OpenSocietyMenu",
+        canInvoice = true,
+        phone = "555-MDR",
+        canReceiveSocietyInvoice = true,
+    },
+    [SozJobCore.JobType.Debug] = {label = "Debug job", grades = {}, permissions = {}, canReceiveSocietyInvoice = false},
 }
 
 SozJobCore.adsl_payout = 12
@@ -566,7 +641,6 @@ SozJobCore.adsl_vehicule = {x = 500.79, y = -105.88, z = 62.07, w = 253.78}
 SozJobCore.adsl_clothes = {
     [GetHashKey("mp_m_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 0, Texture = 0, Palette = 0},
             [4] = {Drawable = 9, Texture = 3, Palette = 0},
             [6] = {Drawable = 25, Texture = 0, Palette = 0},
@@ -580,7 +654,6 @@ SozJobCore.adsl_clothes = {
     },
     [GetHashKey("mp_f_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 14, Texture = 0, Palette = 0},
             [4] = {Drawable = 11, Texture = 4, Palette = 0},
             [6] = {Drawable = 25, Texture = 0, Palette = 0},
@@ -599,7 +672,6 @@ SozJobCore.livraison_vehicule = {x = -413.45, y = -2791.54, z = 7.0, w = 317.52}
 SozJobCore.livraison_clothes = {
     [GetHashKey("mp_m_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 0, Texture = 0, Palette = 0},
             [4] = {Drawable = 6, Texture = 0, Palette = 0},
             [6] = {Drawable = 9, Texture = 10, Palette = 0},
@@ -613,7 +685,6 @@ SozJobCore.livraison_clothes = {
     },
     [GetHashKey("mp_f_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 14, Texture = 0, Palette = 0},
             [4] = {Drawable = 8, Texture = 4, Palette = 0},
             [6] = {Drawable = 3, Texture = 5, Palette = 0},
@@ -633,7 +704,6 @@ SozJobCore.religion_prayers_range = {min = 3, max = 6}
 SozJobCore.religion_clothes = {
     [GetHashKey("mp_m_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 11, Texture = 0, Palette = 0},
             [4] = {Drawable = 0, Texture = 0, Palette = 0},
             [6] = {Drawable = 14, Texture = 0, Palette = 0},
@@ -647,7 +717,6 @@ SozJobCore.religion_clothes = {
     },
     [GetHashKey("mp_f_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 14, Texture = 0, Palette = 0},
             [4] = {Drawable = 0, Texture = 0, Palette = 0},
             [6] = {Drawable = 2, Texture = 2, Palette = 0},
@@ -666,7 +735,6 @@ SozJobCore.metal_vehicule = {x = -346.18, y = -1569.38, z = 25.23, w = 17.67}
 SozJobCore.metal_clothes = {
     [GetHashKey("mp_m_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 0, Texture = 0, Palette = 0},
             [4] = {Drawable = 9, Texture = 8, Palette = 0},
             [6] = {Drawable = 25, Texture = 0, Palette = 0},
@@ -680,7 +748,6 @@ SozJobCore.metal_clothes = {
     },
     [GetHashKey("mp_f_freemode_01")] = {
         Components = {
-            [1] = {Drawable = 0, Texture = 0, Palette = 0},
             [3] = {Drawable = 14, Texture = 0, Palette = 0},
             [4] = {Drawable = 11, Texture = 2, Palette = 0},
             [6] = {Drawable = 25, Texture = 0, Palette = 0},

@@ -180,7 +180,7 @@ Config.AnimationsList = {
             "Animation d'arrestation",
             false,
             "inv_barriere",
-            {"anim@sports@ballgame@handball@", "ball_rstop_r", 262144, false, false, "ball_get_up"},
+            {event = "soz-core:client:player:animation:takedown"},
         },
         ["SWAT"] = {
             {"Venez !", "Intervention", false, "inv_lspdshield", {"swat", "come", 50}},
@@ -200,7 +200,22 @@ Config.AnimationsList = {
             "inv_copsuit",
             {"0", "world_human_car_park_attendant", 262144},
         },
-        {"Lampe torche", "Pratique (ou pas)", false, "inv_copsuit", {"0", "world_human_security_shine_torch", 262144}},
+        {
+            "Lampe torche",
+            "Pratique (ou pas)",
+            false,
+            "inv_copsuit",
+            {
+                "amb@world_human_security_shine_torch@male@base",
+                "base",
+                49,
+                false,
+                false,
+                nil,
+                nil,
+                {model = "prop_cs_police_torch_02", bone = 18905, coords = {0.16, 0.03, 0, 110.0, -70.0, 0.0}},
+            },
+        },
         {"Cow Boy", "Sheriff incompris", false, "inv_copsuit", {"amb@world_human_cop_idles@male@base", "base", 49}},
         {
             "Bras Croisé",
@@ -5372,6 +5387,7 @@ Config.WalkStyle = {
     {name = "Menotté", walk = "move_m@prisoner_cuffed"},
     {name = "Pressé", walk = "move_f@hurry@a"},
     {name = "Trottiner", walk = "move_m@quick"},
+    {name = "Accroupi", walk = "move_ped_crouched"},
 }
 
 -- {

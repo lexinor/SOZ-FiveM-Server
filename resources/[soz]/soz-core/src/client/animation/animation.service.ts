@@ -2,7 +2,8 @@ import PCancelable from 'p-cancelable';
 
 import { Inject, Injectable } from '../../core/decorators/injectable';
 import { wait, waitUntil } from '../../core/utils';
-import { Vector4 } from '../../shared/polyzone/vector';
+import { BoxZone } from '../../shared/polyzone/box.zone';
+import { Vector3, Vector4 } from '../../shared/polyzone/vector';
 import { AnimationOptions, animationOptionsToFlags } from '../../shared/progress';
 import { WeaponName } from '../../shared/weapons/weapon';
 import { ResourceLoader } from '../resources/resource.loader';
@@ -63,7 +64,7 @@ export class AnimationService {
             ? 1000
             : animation.options?.repeat
             ? -1
-            : GetAnimDuration(animation.dictionary, animation.name);
+            : GetAnimDuration(animation.dictionary, animation.name) * 1000;
 
         const blendInSpeed = animation.blendInSpeed ? animation.blendInSpeed : 1;
         const blendOutSpeed = animation.blendOutSpeed ? animation.blendOutSpeed : 1;
@@ -115,18 +116,33 @@ export class AnimationService {
         return cancelled;
     }
 
-    private async doScenario(scenario: Scenario): Promise<boolean> {
+    private async doScenario(scenario: Scenario, stop: PCancelable<void>): Promise<boolean> {
         const ped = PlayerPedId();
 
         ClearPedTasksImmediately(ped);
         TaskStartScenarioInPlace(ped, scenario.name, 0, true);
 
-        return waitUntil(
-            async () => {
-                return !IsPedUsingScenario(ped, scenario.name);
-            },
-            scenario.duration ? scenario.duration : -1
-        );
+        const until = async () => {
+            return !IsPedUsingAnyScenario(ped) || !IsPedUsingScenario(ped, scenario.name);
+        };
+
+        if (scenario.duration) {
+            return waitUntil(until, scenario.duration);
+        }
+
+        const waitUntilPromise = waitUntil(until);
+        const durationPromise = async () => {
+            await stop;
+
+            return false;
+        };
+
+        const cancelled = await Promise.race([waitUntilPromise, durationPromise()]);
+
+        waitUntilPromise.cancel();
+        stop.cancel();
+
+        return cancelled;
     }
 
     public async loop() {
@@ -175,7 +191,7 @@ export class AnimationService {
                     );
                 }
             } else if (this.currentAnimation.scenario) {
-                cancelled = await this.doScenario(this.currentAnimation.scenario);
+                cancelled = await this.doScenario(this.currentAnimation.scenario, animationPromise);
             }
 
             const ped = PlayerPedId();
@@ -183,7 +199,6 @@ export class AnimationService {
             if (options.reset_weapon) {
                 SetCurrentPedWeapon(ped, GetHashKey(WeaponName.UNARMED), true);
             }
-
             this.currentAnimation.resolve(cancelled);
 
             this.currentAnimation = null;
@@ -197,9 +212,22 @@ export class AnimationService {
     }
 
     public async walkToCoords(coords: Vector4, duration = 1000) {
+        const playerPed = PlayerPedId();
         TaskGoStraightToCoord(PlayerPedId(), coords[0], coords[1], coords[2], 1.0, duration, coords[3], 0.1);
 
-        await wait(duration);
+        const zone: BoxZone = new BoxZone([coords[0], coords[1], coords[2]], 1, 1);
+        const interval = 500;
+        for (let i = 0; i < duration - interval; i += interval) {
+            if (
+                zone.isPointInside(GetEntityCoords(playerPed) as Vector3) &&
+                Math.abs(GetEntityHeading(playerPed) - coords[3]) < 5
+            ) {
+                break;
+            }
+
+            await wait(interval);
+        }
+        await wait(interval);
     }
 
     public async playScenario(scenario: Scenario, options?: PlayOptions): Promise<boolean> {
@@ -251,6 +279,14 @@ export class AnimationService {
     }
 
     public stop() {
+        if (this.currentAnimationLoopResolve) {
+            this.currentAnimationLoopResolve();
+        }
+    }
+
+    public purge() {
+        this.queue = [];
+
         if (this.currentAnimationLoopResolve) {
             this.currentAnimationLoopResolve();
         }

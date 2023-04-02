@@ -1,9 +1,12 @@
+import { ServerEvent } from '@public/shared/event';
+
 import { Inject, Injectable } from '../../core/decorators/injectable';
 import { emitRpc } from '../../core/rpc';
 import { getDistance, Vector3, Vector4 } from '../../shared/polyzone/vector';
 import { RpcEvent } from '../../shared/rpc';
 import { VehicleConfiguration } from '../../shared/vehicle/modification';
 import { getDefaultVehicleState, VehicleCondition, VehicleEntityState } from '../../shared/vehicle/vehicle';
+import { PlayerService } from '../player/player.service';
 import { Qbcore } from '../qbcore';
 import { VehicleModificationService } from './vehicle.modification.service';
 
@@ -20,9 +23,8 @@ export class VehicleService {
     @Inject(VehicleModificationService)
     private vehicleModificationService: VehicleModificationService;
 
-    public getVehicleProperties(vehicle: number): any[] {
-        return this.QBCore.getVehicleProperties(vehicle);
-    }
+    @Inject(PlayerService)
+    private playerService: PlayerService;
 
     public async getVehicleConfiguration(vehicleEntityId: number): Promise<VehicleConfiguration> {
         const state = this.getVehicleState(vehicleEntityId);
@@ -42,6 +44,13 @@ export class VehicleService {
     public getVehicleState(vehicle: number): VehicleEntityState {
         const state = Entity(vehicle).state;
         const defaultState = getDefaultVehicleState();
+        const condition = this.getVehicleCondition(vehicle);
+
+        defaultState.condition = {
+            ...defaultState.condition,
+            ...condition,
+        };
+
         const returnState = {};
 
         for (const key of Object.keys(defaultState)) {
@@ -173,7 +182,7 @@ export class VehicleService {
         const wheelNumber = 6;
 
         for (let i = 0; i < wheelNumber; i++) {
-            tireHealth[i] = GetVehicleWheelHealth(vehicle, i);
+            tireHealth[i] = GetTyreHealth(vehicle, i);
         }
 
         for (let i = 0; i < wheelNumber; i++) {
@@ -206,5 +215,15 @@ export class VehicleService {
 
     public applyVehicleConfiguration(vehicle: number, modification: VehicleConfiguration): void {
         this.vehicleModificationService.applyVehicleConfiguration(vehicle, modification);
+    }
+
+    public updateVehiculeClothConfig() {
+        this.playerService.reApplyHeadConfig();
+
+        TriggerServerEvent(
+            ServerEvent.PLAYER_UPDATE_HAT_VEHICLE,
+            GetPedPropIndex(PlayerPedId(), 0),
+            GetPedPropTextureIndex(PlayerPedId(), 0)
+        );
     }
 }

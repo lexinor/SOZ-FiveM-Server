@@ -1,14 +1,14 @@
 QBCore.Functions.CreateCallback("soz-character:server:GetUserAccount", function(source, cb)
     local account = QBCore.Functions.GetUserAccount(source)
 
-    if account then
+    if not account then
         if not GetConvar("soz_allow_anonymous_login", "false") == "true" then
             DropPlayer(source, "no account found with this steam id")
         else
             cb(nil)
         end
     else
-        cb(result)
+        cb(account)
     end
 end)
 
@@ -17,6 +17,7 @@ QBCore.Functions.CreateCallback("soz-character:server:CreatePlayer", function(so
 
     if QBCore.Player.Login(source, false, player) then
         QBCore.Commands.Refresh(source)
+        QBCore.Player.Save(source)
         TriggerEvent("monitor:server:event", "player_login", {player_source = source}, {})
 
         for _, item in pairs(Config.NewPlayerDefaultItems) do

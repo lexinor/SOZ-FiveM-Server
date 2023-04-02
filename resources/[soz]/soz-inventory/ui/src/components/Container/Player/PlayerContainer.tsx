@@ -19,6 +19,13 @@ export const PlayerContainer = () => {
     const [playerInventory, setPlayerInventory] = useState<SozInventoryModel | null>();
     const [playerShortcuts, setPlayerShortcuts] = useState<Partial<InventoryItem>[]>();
 
+
+    const closeMenu = useCallback(() => {
+        setDisplay(false);
+        setPlayerInventory(null);
+        setPlayerShortcuts([]);
+    }, [setDisplay, setPlayerInventory, setPlayerShortcuts]);
+
     const interactAction = useCallback(
         (action: string, item: InventoryItem, shortcut: number) => {
             fetch(`https://soz-inventory/player/${action}`, {
@@ -27,21 +34,19 @@ export const PlayerContainer = () => {
                     "Content-Type": "application/json; charset=UTF-8",
                 },
                 body: JSON.stringify({ ...item, shortcut }),
-            }).then(() => {
-                setDisplay(false);
-            });
+            }).then(() => closeMenu());
         },
-        [setDisplay]
+        [closeMenu]
     );
 
     const onClickReceived = useCallback(
         (event: MouseEvent) => {
             if (display && menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 event.preventDefault();
-                closeNUI(() => setDisplay(false));
+                closeNUI(() => closeMenu());
             }
         },
-        [menuRef, display, setDisplay]
+        [menuRef, display, closeMenu]
     );
 
     const onMessageReceived = useCallback(
@@ -57,32 +62,35 @@ export const PlayerContainer = () => {
                     event.data.playerInventory.items = event.data.playerInventory.items.filter((i: InventoryItem) => i !== null)
 
                     setPlayerInventory(event.data.playerInventory);
-                    setPlayerMoney(event.data.playerMoney);
+                    setPlayerMoney(event.data.playerMoney || -1);
                     setPlayerShortcuts(event.data.playerShortcuts);
 
                     setDisplay(true);
                 } catch (e: any) {
                     console.error(e, event.data.playerInventory, event.data.playerMoney);
-                    closeNUI(() => setDisplay(false));
+                    closeNUI(() => closeMenu());
                 }
             }
         },
-        [setDisplay, setPlayerMoney, setPlayerInventory, setPlayerShortcuts]
+        [setDisplay, closeMenu, setPlayerMoney, setPlayerInventory, setPlayerShortcuts]
     );
 
     const onKeyDownReceived = useCallback(
         (event: KeyboardEvent) => {
             if (display && !event.repeat && (event.key === "Escape" || event.key === "F2")) {
-                closeNUI(() => setDisplay(false));
+                closeNUI(() => closeMenu());
             }
         },
-        [display, setDisplay]
+        [display, closeMenu]
     );
 
     const handleDragAndDrop = useCallback((event: any) => {
             if (!event.active.data.current) return;
 
             if (event.over !== null) { // Do a sort in inventory
+                if (event.active.id == 'player_drag_money_' || event.over.id == 'player_money' ) {
+                    return;
+                }
                 fetch(`https://soz-inventory/sortItem`, {
                     method: "POST",
                     headers: {
@@ -106,6 +114,13 @@ export const PlayerContainer = () => {
                     .catch((e) => {
                     console.error("Failed to sort item", e);
                 });
+            } else if (event.active.id == 'player_drag_money_') {
+                fetch(`https://soz-inventory/player/giveMoneyToTarget`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=UTF-8",
+                    },
+                }).then(() => closeMenu());                   
             } else {
                 fetch(`https://soz-inventory/player/giveItemToTarget`, {
                     method: "POST",
@@ -113,12 +128,10 @@ export const PlayerContainer = () => {
                         "Content-Type": "application/json; charset=UTF-8",
                     },
                     body: JSON.stringify(event.active.data.current.item),
-                }).then(() => {
-                    setDisplay(false);
-                });
+                }).then(() => closeMenu());
             }
         },
-        [playerInventory, setDisplay]
+        [playerInventory, closeMenu]
     );
 
     const itemShortcut = useCallback((item: InventoryItem) => {

@@ -1,4 +1,6 @@
-import { SozRole } from '../core/permissions';
+import { SozRole } from '@core/permissions';
+import { Talent } from '@private/shared/talent';
+
 import { ClothConfig } from './cloth';
 import { Disease } from './disease';
 import { InventoryItem } from './item';
@@ -10,14 +12,18 @@ export type QBCorePlayer = {
         SetMetaData: (key: string, val: any) => void;
         Save: () => void;
         UpdateMaxWeight: () => void;
+        UpdatePlayerData: () => void;
         AddMoney: (type: 'money' | 'marked_money', amount: number) => boolean;
         RemoveMoney: (type: 'money' | 'marked_money', amount: number) => boolean;
         SetClothConfig: (config: ClothConfig, skipApply: boolean) => void;
+        GetMoney: (type: 'money' | 'marked_money') => number;
+        SetJobDuty: (onDuty: boolean) => void;
     };
     PlayerData: PlayerData;
 };
 
 export type PlayerData = {
+    apartment: any;
     citizenid: string;
     license: string;
     name: string;
@@ -37,6 +43,9 @@ export type PlayerData = {
 
 // TODO: Finish to implement the other properties
 export type Skin = {
+    Hair: {
+        HairType: number;
+    };
     Model: {
         Hash: number;
     };
@@ -81,12 +90,15 @@ export type PlayerServerState = {
     exercise: PlayerServerStateExercise & {
         completed: number;
     };
+    lastStrengthUpdate: Date;
+    lastMaxStaminaUpdate: Date;
+    lastStressLevelUpdate: Date;
 };
 
 export enum PlayerLicenceType {
     Car = 'car',
     Truck = 'truck',
-    Moto = 'moto',
+    Moto = 'motorcycle',
     Boat = 'boat',
     Heli = 'heli',
     Weapon = 'weapon',
@@ -94,6 +106,17 @@ export enum PlayerLicenceType {
     Hunting = 'hunting',
     Rescuer = 'rescuer',
 }
+
+export enum PlayerCriminalState {
+    None,
+    Allowed,
+}
+
+export type PlayerInsideState = {
+    apartment: number | false;
+    property: number | null;
+    exitCoord: { x: number; y: number; z: number } | false;
+};
 
 export type PlayerMetadata = PlayerHealthBook & {
     godmode: boolean;
@@ -118,10 +141,6 @@ export type PlayerMetadata = PlayerHealthBook & {
         hidden: boolean;
     };
     organ: 'foie' | 'rein' | null;
-    last_strength_update: string | null;
-    last_max_stamina_update: string | null;
-    last_stress_level_update: string | null;
-    last_exercise_completed: number | null;
     walk: string | null;
     disease: Disease | null;
     last_disease_at: number | null;
@@ -131,4 +150,14 @@ export type PlayerMetadata = PlayerHealthBook & {
     halloween2022: Halloween2022 | null;
     licences: Partial<Record<PlayerLicenceType, number>>;
     shortcuts: Record<number, Partial<InventoryItem>>;
+    mort: string | null;
+    missive_count: number;
+    criminal_state: PlayerCriminalState;
+    criminal_reputation: number;
+    criminal_talents: Talent[];
+    vehiclelimit: number;
+    inside: PlayerInsideState;
+    injuries_count: number;
+    injuries_date: number;
+    itt: boolean;
 };

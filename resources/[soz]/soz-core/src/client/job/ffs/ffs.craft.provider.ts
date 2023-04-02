@@ -2,7 +2,6 @@ import { Once, OnceStep } from '../../../core/decorators/event';
 import { Inject } from '../../../core/decorators/injectable';
 import { Provider } from '../../../core/decorators/provider';
 import { ServerEvent } from '../../../shared/event';
-import { InventoryItem } from '../../../shared/item';
 import { FfsConfig, Process } from '../../../shared/job/ffs';
 import { InventoryManager } from '../../inventory/inventory.manager';
 import { ItemService } from '../../item/item.service';
@@ -66,10 +65,7 @@ export class FightForStyleCraftProvider {
             blackoutJob: 'ffs',
             canInteract: () => {
                 for (const input of craftProcess.inputs) {
-                    const predicate = (item: InventoryItem) => {
-                        return item.name === input.id && item.amount >= input.amount;
-                    };
-                    if (!this.inventoryManager.findItem(predicate)) {
+                    if (!this.inventoryManager.hasEnoughItem(input.id, input.amount)) {
                         return false;
                     }
                 }
