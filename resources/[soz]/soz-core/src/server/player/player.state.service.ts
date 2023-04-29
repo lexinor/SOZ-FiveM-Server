@@ -17,6 +17,39 @@ export class PlayerStateService {
         return this.stateByCitizenId[citizenId];
     }
 
+    private getPlayerIdentifierByType(source: string, type: string): string | null {
+        // @TODO: Enable when we upgrade server
+        // if (GetPlayerIdentifierByType) {
+        //     return GetPlayerIdentifierByType(source, type);
+        // }
+
+        const identifiers = getPlayerIdentifiers(source);
+
+        for (const identifier of identifiers) {
+            if (identifier.startsWith(`${type}:`)) {
+                return identifier;
+            }
+        }
+
+        return null;
+    }
+
+    public getIdentifier(source: string): string | null {
+        if (GetConvar('soz_disable_steam_credential', 'false') === 'true') {
+            return this.getPlayerIdentifierByType(source, 'license');
+        }
+
+        const steamIdentifier = this.getPlayerIdentifierByType(source, 'steam');
+
+        if (!steamIdentifier) {
+            return null;
+        }
+
+        const steamHex = steamIdentifier.replace('steam:', '');
+
+        return BigInt(`0x${steamHex}`).toString();
+    }
+
     public get(source: number): PlayerServerState {
         const player = this.playerService.getPlayer(source);
 

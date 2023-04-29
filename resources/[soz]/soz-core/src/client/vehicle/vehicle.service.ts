@@ -1,9 +1,11 @@
+import { Logger } from '@core/logger';
+import { wait } from '@core/utils';
 import { ServerEvent } from '@public/shared/event';
 
 import { Inject, Injectable } from '../../core/decorators/injectable';
 import { emitRpc } from '../../core/rpc';
 import { getDistance, Vector3, Vector4 } from '../../shared/polyzone/vector';
-import { RpcEvent } from '../../shared/rpc';
+import { RpcServerEvent } from '../../shared/rpc';
 import { VehicleConfiguration } from '../../shared/vehicle/modification';
 import { getDefaultVehicleState, VehicleCondition, VehicleEntityState } from '../../shared/vehicle/vehicle';
 import { PlayerService } from '../player/player.service';
@@ -26,6 +28,26 @@ export class VehicleService {
     @Inject(PlayerService)
     private playerService: PlayerService;
 
+    @Inject(Logger)
+    private logger: Logger;
+
+    public async getVehicleOwnership(vehicle: number, vehicleNetworkId: number, context: string): Promise<void> {
+        let tryCount = 0;
+
+        while (
+            !NetworkRequestControlOfEntity(vehicle) &&
+            !NetworkRequestControlOfNetworkId(vehicleNetworkId) &&
+            tryCount < 10
+        ) {
+            await wait(100);
+            tryCount++;
+        }
+
+        if (!NetworkHasControlOfEntity(vehicle) || !NetworkHasControlOfNetworkId(vehicleNetworkId)) {
+            this.logger.error(`failed to get ownership of vehicle ${vehicle} / ${vehicleNetworkId} [${context}]`);
+        }
+    }
+
     public async getVehicleConfiguration(vehicleEntityId: number): Promise<VehicleConfiguration> {
         const state = this.getVehicleState(vehicleEntityId);
         let vehicleConfiguration = this.vehicleModificationService.getVehicleConfiguration(vehicleEntityId);
@@ -33,7 +55,7 @@ export class VehicleService {
         if (state.id) {
             const vehicleNetworkId = NetworkGetNetworkIdFromEntity(vehicleEntityId);
             vehicleConfiguration = await emitRpc<VehicleConfiguration>(
-                RpcEvent.VEHICLE_CUSTOM_GET_MODS,
+                RpcServerEvent.VEHICLE_CUSTOM_GET_MODS,
                 vehicleNetworkId
             );
         }
@@ -210,6 +232,7 @@ export class VehicleService {
             tireBurstState,
             doorStatus,
             windowStatus,
+            dirtLevel: GetVehicleDirtLevel(vehicle),
         };
     }
 
@@ -225,5 +248,15 @@ export class VehicleService {
             GetPedPropIndex(PlayerPedId(), 0),
             GetPedPropTextureIndex(PlayerPedId(), 0)
         );
+    }
+
+    public checkBackOfVehicle(vehicle: number): boolean {
+        const playerPosition = GetEntityCoords(PlayerPedId(), true) as Vector3;
+        const model = GetEntityModel(vehicle);
+        const [min, max] = GetModelDimensions(model) as [Vector3, Vector3];
+        const vehicleLength = max[1] - min[1];
+        const backPosition = GetOffsetFromEntityInWorldCoords(vehicle, 0.0, -vehicleLength / 2, 0.0) as Vector3;
+        const distance = getDistance(backPosition, playerPosition);
+        return distance < 2.0;
     }
 }

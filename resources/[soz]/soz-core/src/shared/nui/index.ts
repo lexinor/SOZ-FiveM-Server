@@ -1,3 +1,4 @@
+import { NuiCardMethodMap } from '@public/shared/nui/card';
 import { NuiCraftingMethodMap } from '@public/shared/nui/crafting';
 import { NuiItemMethodMap } from '@public/shared/nui/item';
 import { NuiMissiveMethodMap } from '@public/shared/nui/missive';
@@ -9,7 +10,6 @@ import { NuiAudioMethodMap } from './audio';
 import { NuiBennysOrderMenuMethodMap } from './bennys_order_menu';
 import { NuiClipboardMethodMap } from './clipboard';
 import { NuiFfsRecipeBookMethodMap } from './ffs_recipe_book';
-import { NuiHealthBookMethodMap } from './health_book';
 import { NuiHoodMethodMap } from './hood';
 import { NuiInputMethodMap } from './input';
 import { NuiMaskShopMethodMap } from './mask_shop';
@@ -19,6 +19,8 @@ import { NuiPLayerMethodMap } from './player';
 import { NuiPoliceMethodMap } from './police';
 import { NuiProgressMethodMap } from './progress';
 import { NuiRepairMethodMap } from './repair';
+import { NuiTaxiMethodMap } from './taxi';
+import { NuiUpwOrderMenuMethodMap } from './upw_order_menu';
 
 export interface NuiGlobalMethodMap {
     PauseMenuActive: boolean;
@@ -29,10 +31,10 @@ export interface NuiMethodMap {
     admin_skin_submenu: NuiAdminSkinSubMenuMethodMap;
     audio: NuiAudioMethodMap;
     bennys_order_menu: NuiBennysOrderMenuMethodMap;
+    upw_order_menu: NuiUpwOrderMenuMethodMap;
     clipboard: NuiClipboardMethodMap;
     ffs_recipe_book: NuiFfsRecipeBookMethodMap;
     global: NuiGlobalMethodMap;
-    health_book: NuiHealthBookMethodMap;
     input: NuiInputMethodMap;
     mask_shop: NuiMaskShopMethodMap;
     menu: NuiMenuMethodMap;
@@ -46,6 +48,8 @@ export interface NuiMethodMap {
     crafting: NuiCraftingMethodMap;
     item: NuiItemMethodMap;
     hood: NuiHoodMethodMap;
+    taxi: NuiTaxiMethodMap;
+    card: NuiCardMethodMap;
 }
 
 export const eventNameFactory = <App extends keyof NuiMethodMap, Method extends keyof NuiMethodMap[App]>(

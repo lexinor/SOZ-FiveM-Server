@@ -121,7 +121,11 @@ end
 
 function ActionStart()
     runProgThread = true
-    LocalPlayer.state:set("inv_busy", not Action.no_inv_busy, true) -- Busy
+    if not Action.no_inv_busy then
+        LocalPlayer.state:set("inv_busy", true, true) -- Busy
+        exports["soz-phone"]:setPhoneVisible(false)
+        TriggerEvent("inventory:client:closeInventory")
+    end
     CreateThread(function()
         while runProgThread do
             if isDoingAction then
@@ -258,11 +262,11 @@ function ActionCleanup()
     playerProps = {}
     playerHasProp = false
 
-    if prop_net then
+    if prop_net and NetworkDoesNetworkIdExist(prop_net) then
         DetachEntity(NetToObj(prop_net), 1, 1)
         DeleteEntity(NetToObj(prop_net))
     end
-    if propTwo_net then
+    if propTwo_net and NetworkDoesNetworkIdExist(propTwo_net) then
         DetachEntity(NetToObj(propTwo_net), 1, 1)
         DeleteEntity(NetToObj(propTwo_net))
     end

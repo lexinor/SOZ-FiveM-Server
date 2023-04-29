@@ -51,6 +51,7 @@ SozJobCore.JobPermission = {
     Ffs = {Harvest = "harvest", Restock = "restock", Craft = "craft"},
     Bennys = {Estimate = "estimate", Resell = "resell", Order = "order"},
     Mdr = {ViewOtherJobs = "view-other-jobs", ViewCitizenData = "view-citizen-data"},
+    UPW = {Order = "order", ChangePrice = "upw-change-price"},
 }
 
 SozJobCore.Jobs = {
@@ -220,7 +221,7 @@ SozJobCore.Jobs = {
         label = "Los Santos Medical Center",
         platePrefix = "LSMC",
         grades = {},
-        menuCallback = "lsmc:client:OpenSocietyMenu",
+        menuCallback = "soz-jobs:client:lsmc:OpenSocietyMenu",
         canInvoice = true,
         permissions = {
             [SozJobCore.JobPermission.Enrollment] = {label = "Gestion des recrutements"},
@@ -252,7 +253,7 @@ SozJobCore.Jobs = {
         label = "Carl Jr Services",
         platePrefix = "CARL",
         grades = {},
-        menuCallback = "taxi:client:OpenSocietyMenu",
+        menuCallback = "soz-jobs:client:taxi:OpenSocietyMenu",
         canInvoice = true,
         permissions = {
             [SozJobCore.JobPermission.Enrollment] = {label = "Gestion des recrutements"},
@@ -489,7 +490,6 @@ SozJobCore.Jobs = {
         label = "Unexpected Power & Water",
         platePrefix = "UPW",
         grades = {},
-        menuCallback = "jobs:client:upw:OpenSocietyMenu",
         canInvoice = true,
         permissions = {
             [SozJobCore.JobPermission.Enrollment] = {label = "Gestion des recrutements"},
@@ -499,6 +499,9 @@ SozJobCore.Jobs = {
             [SozJobCore.JobPermission.SocietyPrivateStorage] = {label = "Accès aux stockages société privés"},
             [SozJobCore.JobPermission.SocietyDealershipVehicle] = {label = "Accès aux concessionnaires de véhicules"},
             [SozJobCore.JobPermission.SocietyTakeOutPound] = {label = "Sortir les véhicules de la fourrière"},
+            [SozJobCore.JobPermission.UPW.Order] = {label = "Commander des véhicules éléctriques"},
+            [SozJobCore.JobPermission.SocietyShop] = {label = "Accès aux magasins de société"},
+            [SozJobCore.JobPermission.UPW.ChangePrice] = {label = "Changer le prix des chargeurs"},
         },
         bossZones = {
             {

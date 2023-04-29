@@ -19,6 +19,7 @@ module.exports = {
             arial: ['Arial', 'Helvetica', 'serif'],
             noto: ['Noto Serif', 'serif'],
             mono: ['input-mono', 'monospace'],
+            lato: ['Lato', ...defaultTheme.fontFamily.sans],
         },
         extend: {
             colors: {},
@@ -43,6 +44,10 @@ module.exports = {
             },
             animation: {
                 defilement: 'defilement 7s infinite linear',
+            },
+            fontSize: {
+                '2xs': '.6rem',
+                xsm: '.8rem',
             },
         },
     },

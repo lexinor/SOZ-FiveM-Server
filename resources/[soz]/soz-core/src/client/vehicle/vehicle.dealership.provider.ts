@@ -1,17 +1,19 @@
+import { Tick } from '@public/core/decorators/tick';
+import { wait } from '@public/core/utils';
+
 import { DealershipConfig, DealershipConfigItem, DealershipJob, DealershipType } from '../../config/dealership';
 import { Once, OnceStep, OnEvent, OnNuiEvent } from '../../core/decorators/event';
 import { Inject } from '../../core/decorators/injectable';
 import { Provider } from '../../core/decorators/provider';
 import { emitRpc } from '../../core/rpc';
-import { VehicleStateService } from '../../server/vehicle/vehicle.state.service';
 import { ClientEvent, NuiEvent } from '../../shared/event';
 import { Feature, isFeatureEnabled } from '../../shared/features';
 import { JobPermission } from '../../shared/job';
 import { MenuType } from '../../shared/nui/menu';
 import { getRandomItem } from '../../shared/random';
 import { Err, Ok } from '../../shared/result';
-import { RpcEvent } from '../../shared/rpc';
-import { AuctionVehicle } from '../../shared/vehicle/auction';
+import { RpcServerEvent } from '../../shared/rpc';
+import { AuctionVehicle, ShowVehicle } from '../../shared/vehicle/auction';
 import { Vehicle, VehicleDealershipMenuData } from '../../shared/vehicle/vehicle';
 import { BlipFactory } from '../blip';
 import { JobPermissionService } from '../job/job.permission.service';
@@ -37,9 +39,6 @@ export class VehicleDealershipProvider {
     @Inject(VehicleService)
     private vehicleService: VehicleService;
 
-    @Inject(VehicleStateService)
-    private vehicleStateService: VehicleStateService;
-
     @Inject(ResourceLoader)
     private resourceLoader: ResourceLoader;
 
@@ -58,6 +57,35 @@ export class VehicleDealershipProvider {
     private lastVehicleShowroom: number | null = null;
 
     private auctionVehicles: Record<string, AuctionVehicle> = {};
+
+    private electricShowVehicles: Record<number, ShowVehicle> = {
+        [1]: {
+            position: [-59.5, 65.61, 71.97, 173.62],
+            model: 'omnisegt',
+            entity: null,
+            rotSpeed: 0.2,
+        },
+        [2]: {
+            position: [-76.05, 76.71, 71.97, 8.85],
+            model: 'iwagen',
+            entity: null,
+            rotSpeed: 0.2,
+        },
+    };
+
+    @Tick(20)
+    public async onTick() {
+        for (const [, vehicle] of Object.entries(this.electricShowVehicles)) {
+            if (vehicle.entity === null) {
+                return;
+            }
+
+            const heading = GetEntityHeading(vehicle.entity);
+            const newHeading = heading + vehicle.rotSpeed;
+
+            SetEntityHeading(vehicle.entity, newHeading);
+        }
+    }
 
     @Once(OnceStep.PlayerLoaded)
     public async onPlayerLoaded() {
@@ -153,7 +181,9 @@ export class VehicleDealershipProvider {
             color: 46,
         });
 
-        this.auctionVehicles = await emitRpc<Record<string, AuctionVehicle>>(RpcEvent.VEHICLE_DEALERSHIP_GET_AUCTIONS);
+        this.auctionVehicles = await emitRpc<Record<string, AuctionVehicle>>(
+            RpcServerEvent.VEHICLE_DEALERSHIP_GET_AUCTIONS
+        );
 
         for (const [name, auction] of Object.entries(this.auctionVehicles)) {
             await this.resourceLoader.loadModel(auction.vehicle.hash);
@@ -183,6 +213,27 @@ export class VehicleDealershipProvider {
                     },
                 },
             ]);
+        }
+
+        for (const [id, vehicle] of Object.entries(this.electricShowVehicles)) {
+            await this.resourceLoader.loadModel(GetHashKey(vehicle.model));
+
+            const createdVehicle = CreateVehicle(
+                GetHashKey(vehicle.model),
+                vehicle.position[0],
+                vehicle.position[1],
+                vehicle.position[2] - 1.0,
+                vehicle.position[3],
+                false,
+                false
+            );
+            this.electricShowVehicles[id].entity = createdVehicle;
+
+            SetEntityInvincible(createdVehicle, true);
+            SetVehicleDirtLevel(createdVehicle, 0);
+            FreezeEntityPosition(createdVehicle, true);
+            SetVehicleNumberPlateText(createdVehicle, 'ELEC');
+            SetVehicleDoorsLocked(createdVehicle, 2);
         }
     }
 
@@ -227,7 +278,7 @@ export class VehicleDealershipProvider {
         );
 
         const amount = parseInt(input);
-        const hasBid = await emitRpc<boolean>(RpcEvent.VEHICLE_DEALERSHIP_AUCTION_BID, name, amount);
+        const hasBid = await emitRpc<boolean>(RpcServerEvent.VEHICLE_DEALERSHIP_AUCTION_BID, name, amount);
 
         if (hasBid) {
             this.nuiMenu.closeMenu();
@@ -312,7 +363,13 @@ export class VehicleDealershipProvider {
             parkingPlace = getRandomItem(freePlaces);
         }
 
-        const bought = await emitRpc(RpcEvent.VEHICLE_DEALERSHIP_BUY, vehicle, dealershipId, dealership, parkingPlace);
+        const bought = await emitRpc(
+            RpcServerEvent.VEHICLE_DEALERSHIP_BUY,
+            vehicle,
+            dealershipId,
+            dealership,
+            parkingPlace
+        );
 
         if (bought) {
             this.clearMenu();
@@ -343,32 +400,12 @@ export class VehicleDealershipProvider {
     }
 
     public async openDealership(dealershipType: DealershipType, config: DealershipConfigItem) {
-        const vehicles = await emitRpc<Vehicle[]>(RpcEvent.VEHICLE_DEALERSHIP_GET_LIST, dealershipType);
+        const vehicles = await emitRpc<Vehicle[]>(RpcServerEvent.VEHICLE_DEALERSHIP_GET_LIST, dealershipType);
 
-        let vehicle = this.vehicleService.getClosestVehicle({
+        const vehicle = this.vehicleService.getClosestVehicle({
             position: config.showroom.position,
             maxDistance: 3.0,
         });
-        let vehicleDeleted = 0;
-
-        while (vehicle && vehicleDeleted < 10) {
-            const state = this.vehicleStateService.getVehicleState(vehicle);
-
-            if (state.id) {
-                this.notifier.notify('Un véhicule joueur est trop proche du showroom.', 'error');
-
-                return;
-            }
-
-            SetEntityAsMissionEntity(vehicle, true, true);
-            DeleteVehicle(vehicle);
-
-            vehicle = this.vehicleService.getClosestVehicle({
-                position: config.showroom.position,
-                maxDistance: 3.0,
-            });
-            vehicleDeleted++;
-        }
 
         if (vehicle) {
             this.notifier.notify('Un véhicule est trop proche du showroom.', 'error');
@@ -399,6 +436,26 @@ export class VehicleDealershipProvider {
         PointCamAtCoord(camera, config.showroom.position[0], config.showroom.position[1], config.showroom.position[2]);
         SetCamActive(camera, true);
         RenderScriptCams(true, true, 1, true, true);
+
+        while (IsCamActive(camera)) {
+            DisablePlayerFiring(PlayerId(), true); // Disable weapon firing
+            DisableControlAction(0, 24, true); // disable attack
+            DisableControlAction(0, 25, true); // disable aim
+            DisableControlAction(0, 29, true); // disable ability secondary (B)
+            DisableControlAction(0, 44, true); // disable cover
+            DisableControlAction(1, 37, true); // disable weapon select
+            DisableControlAction(0, 47, true); // disable weapon
+            DisableControlAction(0, 58, true); // disable weapon
+            DisableControlAction(0, 140, true); // disable melee
+            DisableControlAction(0, 141, true); // disable melee
+            DisableControlAction(0, 142, true); // disable melee
+            DisableControlAction(0, 143, true); // disable melee
+            DisableControlAction(0, 263, true); // disable melee
+            DisableControlAction(0, 264, true); // disable melee
+            DisableControlAction(0, 257, true); // disable melee
+
+            await wait(0);
+        }
     }
 
     public async openJobDealership() {
@@ -414,7 +471,7 @@ export class VehicleDealershipProvider {
             return;
         }
 
-        const vehicles = await emitRpc<Vehicle[]>(RpcEvent.VEHICLE_DEALERSHIP_GET_LIST_JOB, player.job.id);
+        const vehicles = await emitRpc<Vehicle[]>(RpcServerEvent.VEHICLE_DEALERSHIP_GET_LIST_JOB, player.job.id);
 
         this.nuiMenu.openMenu(MenuType.VehicleDealership, {
             name: 'Concessionnaire entreprise',

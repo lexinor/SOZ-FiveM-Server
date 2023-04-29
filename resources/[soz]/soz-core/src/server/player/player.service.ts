@@ -1,3 +1,5 @@
+import { ServerStateService } from '@public/server/server.state.service';
+
 import { Inject, Injectable } from '../../core/decorators/injectable';
 import { Disease } from '../../shared/disease';
 import { ClientEvent } from '../../shared/event';
@@ -8,6 +10,9 @@ import { QBCore } from '../qbcore';
 export class PlayerService {
     @Inject(QBCore)
     private QBCore: QBCore;
+
+    @Inject(ServerStateService)
+    private serverStateService: ServerStateService;
 
     public getPlayerByCitizenId(citizenId: string): PlayerData | null {
         const player = this.QBCore.getPlayerByCitizenId(citizenId);
@@ -26,17 +31,13 @@ export class PlayerService {
     }
 
     public getPlayer(source: number): PlayerData | null {
-        const player = this.QBCore.getPlayer(source);
+        const player = this.serverStateService.getPlayer(source);
 
         if (!player) {
             return null;
         }
 
-        return player.PlayerData;
-    }
-
-    public getPlayersSources(): number[] | null {
-        return this.QBCore.getPlayersSources();
+        return player;
     }
 
     public getPlayerJobAndGrade(source: number): [string, number] | null {
@@ -58,6 +59,18 @@ export class PlayerService {
 
         if (player) {
             player.Functions.SetMetaData(key, value);
+        }
+    }
+
+    public setPlayerMetaDatas(source: number, datas: Partial<PlayerMetadata>) {
+        const player = this.QBCore.getPlayer(source);
+
+        if (player) {
+            player.Functions.SetMetaDatas(datas);
+
+            if (datas.strength) {
+                player.Functions.UpdateMaxWeight();
+            }
         }
     }
 
@@ -97,28 +110,35 @@ export class PlayerService {
             return false;
         }
 
-        player.Functions.SetMetaData('disease', disease);
-        player.Functions.SetMetaData('last_disease_at', Date.now());
+        player.Functions.SetMetaDatas({
+            last_disease_at: Date.now(),
+            disease: disease,
+        });
 
         TriggerClientEvent(ClientEvent.LSMC_DISEASE_APPLY_CURRENT_EFFECT, player.PlayerData.source, disease);
 
         return disease;
     }
 
-    public save(source: number): void {
-        const player = this.QBCore.getPlayer(source);
+    public getIncrementedMetadata<K extends keyof PlayerMetadata>(
+        player: PlayerData,
+        key: K,
+        value: number,
+        min: number,
+        max?: number
+    ): number {
+        const currentValue = player.metadata[key] as number;
+        let newValue = currentValue + value;
 
-        if (player) {
-            player.Functions.Save();
+        if (newValue < min) {
+            newValue = min;
         }
-    }
 
-    public updatePlayerData(source: number): void {
-        const player = this.QBCore.getPlayer(source);
-
-        if (player) {
-            player.Functions.UpdatePlayerData();
+        if (max && newValue > max) {
+            newValue = max;
         }
+
+        return newValue;
     }
 
     public incrementMetadata<K extends keyof PlayerMetadata>(
@@ -131,16 +151,7 @@ export class PlayerService {
         const player = this.QBCore.getPlayer(source);
 
         if (player) {
-            const currentValue = player.PlayerData.metadata[key] as number;
-            let newValue = currentValue + value;
-
-            if (newValue < min) {
-                newValue = min;
-            }
-
-            if (max && newValue > max) {
-                newValue = max;
-            }
+            const newValue = this.getIncrementedMetadata(player.PlayerData, key, value, min, max);
 
             player.Functions.SetMetaData(key, newValue);
 

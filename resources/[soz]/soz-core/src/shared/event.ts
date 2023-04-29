@@ -8,6 +8,7 @@ export enum ServerEvent {
     ADMIN_SET_STRESS_LEVEL = 'soz-core:server:admin:set-stress-level',
     ADMIN_SET_INJURIES_COUNT = 'soz-core:server:admin:set-injuries-count',
     ADMIN_SET_REPUTATION = 'soz-core:server:admin:set-reputation',
+    ADMIN_RESET_CRIMI = 'soz-core:server:admin:reset-crimi',
     ADMIN_VEHICLE_SEE_CAR_PRICE = 'soz-core:server:admin:vehicle:see-car-price',
     ADMIN_VEHICLE_CHANGE_CAR_PRICE = 'soz-core:server:admin:vehicle:change-car-price',
     ADMIN_VEHICLE_SPAWN = 'soz-core:server:admin:vehicle:spawn',
@@ -38,6 +39,7 @@ export enum ServerEvent {
     FOOD_ORDER_MEALS = 'soz-core:server:job:food:order-meals',
     FOOD_RETRIEVE_ORDER = 'soz-core:server:job:food:retrieve-order',
     FOOD_RETRIEVE_STATE = 'soz-core:server:job:food:retrieve-state',
+    FOOD_EASTER_HARVEST = 'soz-core:server:job:food:easter-harvest',
 
     FFS_CRAFT = 'soz-core:server:job:ffs:craft',
     FFS_HARVEST = 'soz-core:server:job:ffs:harvest',
@@ -56,9 +58,14 @@ export enum ServerEvent {
     LSMC_BLOOD_ANALYZE = 'soz-core:server:job:lsmc:blood-analyze',
     LSMC_BUY_ITEM = 'soz-core:server:job:lsmc:buy-item',
     LSMC_HEAL = 'soz-core:server:job:lsmc:heal',
+    LSMC_NPC_HEAL = 'soz-core:server:job:lsmc:npc-heal',
     LSMC_PEE_ANALYZE = 'soz-core:server:job:lsmc:pee-analyze',
     LSMC_HEALTH_CHECK = 'soz-core:server:job:lsmc:health-check',
     LSMC_SET_HEALTH_BOOK = 'soz-core:server:job:lsmc:set-health-book',
+    LSMC_TOOGLE_ITT = 'soz-core:server:job:lsmc:toggle-itt',
+    LSMC_SET_HAZMAT = 'soz-core:server:job:lsmc:set-hazmat',
+    LSMC_SET_CURRENT_ORGAN = 'soz-core:server:job:lsmc:set-organ',
+
     MISSIVE_CREATE_ITEM = 'soz-core:server:missive:create-item',
     MISSIVE_DELETE_ITEM = 'soz-core:server:missive:delete-item',
     MISSIVE_COMPLETE = 'soz-core:server:missive:complete',
@@ -80,7 +87,6 @@ export enum ServerEvent {
 
     PLAYER_NUTRITION_LOOP = 'soz-core:server:player:nutrition:loop',
     PLAYER_NUTRITION_CHECK = 'soz-core:server:player:nutrition:check',
-    PLAYER_SHOW_HEALTH_BOOK = 'soz-core:server:player:health:request-health-book',
     PLAYER_HEALTH_SET_EXERCISE_COMPLETED = 'soz-core:server:player:health:set-exercise-completed',
     PLAYER_HEALTH_GYM_SUBSCRIBE = 'soz-core:server:player:health:gym-subscribe',
 
@@ -97,6 +103,12 @@ export enum ServerEvent {
     STORAGE_REMOVE_ITEM = 'soz-core:server:storage:remove-item',
     SHOP_MASK_BUY = 'soz-core:server:shop:mask:buy',
     SHOP_BOSS_BUY = 'soz-core:server:shop:boss:buy',
+    SHOP_EASTER_BUY = 'soz-core:server:shop:easter:buy',
+
+    UPW_CREATE_CHARGER = 'soz-core:server:job:upw:create-charger',
+    UPW_REFILL_STATION = 'soz-core:server:job:upw:refill-station',
+    UPW_CHANGE_BATTERY = 'soz-core:server:job:upw:change-battery',
+    UPW_SET_CHARGER_PRICE = 'soz-core:server:job:upw:set-charger-price',
 
     AFK_KICK = 'soz-core:server:afk:kick',
 
@@ -125,16 +137,21 @@ export enum ServerEvent {
     QBCORE_SET_DUTY = 'QBCore:Server:SetDuty',
     QBCORE_SET_METADATA = 'QBCore:Server:SetMetaData',
 
-    IDENTITY_HIDE_AROUND = 'soz-identity:server:hide-around',
-
     LSMC_CLEAR_DISEASE = 'lsmc:maladie:ClearDisease',
     LSMC_SET_CURRENT_DISEASE = 'lsmc:maladie:server:SetCurrentDisease',
     LSMC_REVIVE = 'soz-core:lsmc:server:revive',
     LSMC_FREE_BED = 'soz-core:lsmc:server:free-bed',
     LSMC_ON_DEATH = 'soz-core:lsmc:server:on-death',
+    LSMC_ON_DEATH2 = 'soz-core:lsmc:server:on-death2',
     LSMC_SET_DEATH_REASON = 'soz-core:lsmc:server:set-death-reason',
+    LSMC_GIVE_BLOOD = 'soz-core:lsmc:server:give-blood',
+    LSMC_TELEPORTATION = 'soz-core:lsmc:server:teleportation',
+
+    METRICS_UPDATE = 'soz-core:server:metrics:update',
 
     REPOSITORY_REFRESH_DATA = 'soz-core:server:repository:refresh-data',
+
+    TAXI_NPC_PAY = 'soz-core:server:taxi:npc-pay',
 
     VEHICLE_USE_REPAIR_KIT = 'soz-core:server:vehicle:use-repair-kit',
     VEHICLE_USE_CLEANING_KIT = 'soz-core:server:vehicle:use-cleaning-kit',
@@ -142,7 +159,6 @@ export enum ServerEvent {
     VEHICLE_FORCE_OPEN = 'soz-core:server:vehicle:force-open',
     VEHICLE_SET_OPEN = 'soz-core:server:vehicle:set-open',
     VEHICLE_SET_CLOSEST = 'soz-core:server:vehicle:set-closest',
-    VEHICLE_SPAWNED = 'soz-core:server:vehicle:spawned',
     VEHICLE_SWAP = 'soz-core:server:vehicle:swaped',
     VEHICLE_DELETED = 'soz-core:server:vehicle:deleted',
     VEHICLE_GARAGE_STORE = 'soz-core:server:vehicle:garage:store',
@@ -151,6 +167,7 @@ export enum ServerEvent {
     VEHICLE_SET_DEAD = 'soz-core:server:vehicle:set-dead',
     VEHICLE_WASH = 'soz-core:server:vehicle:wash',
     VEHICLE_FUEL_START = 'soz-core:server:vehicle:fuel:start',
+    VEHICLE_CHARGE_START = 'soz-core:server:vehicle:charge:start',
     VEHICLE_OPEN_KEYS = 'soz-core:server:vehicle:open-keys',
     VEHICLE_GIVE_KEY = 'soz-core:server:vehicle:give-key',
     VEHICLE_ROUTE_EJECTION = 'soz-core:server:vehicle:route-ejection',
@@ -170,6 +187,7 @@ export enum ServerEvent {
     WEAPON_SHOOTING = 'soz-core:server:weapon:shooting',
 
     VANDALISM_END = 'soz-core:server:vandalism:end',
+    VANDALISM_UNLOCK = 'soz-core:server:vandalism:unlock',
 
     MDR_SHOW_TICKET = 'soz-core:server:mdr:show-ticket',
 
@@ -187,6 +205,7 @@ export enum ServerEvent {
 
     SOUND_GLOBAL_INIT = 'soz-core:server:sound:init',
 
+    PLAYER_SHOW_IDENTITY = 'soz-core:server:player:show-identity',
     POLICE_TAKE_DOWN = 'soz-core:server:takedown',
 
     HELICO_ADD_LIGHT = 'soz-core:server:police:add-light',
@@ -202,12 +221,12 @@ export enum ServerEvent {
 
     CRIMI_HOOD = 'soz-core:server:crimi:hood',
     CRIMI_UNHOOD = 'soz-core:server:crimi:unhood',
-
-    BIN_CHANGE_LOCK_STATUS = 'soz-core:server:bin:change-lock-status',
+    CRIMI_SMOKE_STRESS = 'soz-core:server:crimi:smoke-stress',
 }
 
 export enum ClientEvent {
     ADMIN_OPEN_MENU = 'soz-core:client:admin:openMenu',
+    ANIMATION_SURRENDER = 'soz-core:client:animation:surrender',
 
     BASE_ENTERED_VEHICLE = 'baseevents:enteredVehicle',
     BASE_LEFT_VEHICLE = 'baseevents:leftVehicle',
@@ -240,7 +259,6 @@ export enum ClientEvent {
 
     HOUSING_OPEN_UPGRADES_MENU = 'soz-core:client:housing:open-upgrades-menu',
 
-    IDENTITY_HIDE = 'soz-identity:client:hide',
     ITEM_USE = 'soz-core:client:item:use',
 
     PLAYER_ON_DEATH = 'ems:client:onDeath',
@@ -250,20 +268,23 @@ export enum ClientEvent {
     JOBS_FOOD_OPEN_SOCIETY_MENU = 'jobs:client:food:OpenSocietyMenu',
     JOBS_STONK_OPEN_SOCIETY_MENU = 'stonk:client:OpenSocietyMenu',
     JOBS_MDR_OPEN_SOCIETY_MENU = 'soz-jobs:client:mdr:OpenSocietyMenu',
+    JOBS_TAXI_OPEN_SOCIETY_MENU = 'soz-jobs:client:taxi:OpenSocietyMenu',
+    JOBS_LSMC_OPEN_SOCIETY_MENU = 'soz-jobs:client:lsmc:OpenSocietyMenu',
+
     JOBS_CHECK_CLOAKROOM_STORAGE = 'soz-jobs:client:check-cloakroom-storage',
     JOB_OPEN_MENU = 'soz-core:client:job:open-menu',
     JOB_DUTY_CHANGE = 'QBCore:Client:SetDuty',
     JOB_OPEN_CLOAKROOM = 'soz-core:client:job::OpenCloakroomMenu',
 
     LSMC_DISEASE_APPLY_CURRENT_EFFECT = 'lsmc:maladie:client:ApplyCurrentDiseaseEffect',
-    LSMC_DISEASE_APPLY_CONDITIONS = 'lsmc:maladie:client:ApplyConditions',
     LSMC_HALLOWEEN_HORRIFIC_LOLLIPOP = 'lsmc:halloween:client:horror-lollipop',
     LSMC_REVIVE = 'soz-core:lsmc:client:revive',
     LSMC_CALL = 'soz-core:lsmc:client:call',
-    LSMC_REAMINATE = 'soz-core:lsmc:reanimate',
     LSMC_APPLY_PATIENT_CLOTHING = 'soz-core:client:lsmc:applyPatientClothing',
     LSMC_REMOVE_PATIENT_CLOTHING = 'soz-core:client:lsmc:removePatientClothing',
     LSMC_APPLY_OUTFIT = 'soz-core:client:lsmc:ApplyDutyClothing',
+    LSMC_TELEPORTATION = 'soz-core:lsmc:client:teleportation',
+    LSMC_HEAL = 'soz-core:lsmc:client:heal',
 
     MISSIVE_SHOW_ITEM = 'soz-core:client:missive:show-item',
     NUI_SHOW_PANEL = 'soz-core:client:nui:show-panel',
@@ -287,11 +308,11 @@ export enum ClientEvent {
     PLAYER_HEALTH_DO_YOGA = 'soz-core:client:player:health:yoga',
     PLAYER_HEALTH_DO_SIT_UP = 'soz-core:client:player:health:sit-up',
     PLAYER_HEALTH_DO_FREE_WEIGHT = 'soz-core:client:player:health:free-weight',
-    PLAYER_REQUEST_HEALTH_BOOK = 'soz-core:client:player:health:request-health-book',
     PLAYER_UPDATE = 'soz-core:client:player:update',
     PLAYER_UPDATE_WALK_STYLE = 'soz-core:client:player:update-walk-style',
     PLAYER_REFRESH_WALK_STYLE = 'soz-core:client:player:refresh-walk-style',
     PLAYER_SET_JOB_OUTFIT = 'soz-core:client:player:set-job-outfit',
+    PLAYER_SHOW_IDENTITY = 'soz-core:client:player:show-identity',
 
     PROGRESS_START = 'soz-core:client:progress:start',
 
@@ -302,9 +323,10 @@ export enum ClientEvent {
     VEHICLE_DEALERSHIP_AUCTION_UPDATE = 'soz-core:client:vehicle:dealership:auction:update',
     VEHICLE_DELETE = 'soz-core:client:vehicle:delete',
     VEHICLE_FUEL_START = 'soz-core:client:vehicle:fuel:start',
+    VEHICLE_CHARGE_START = 'soz-core:client:vehicle:charge:start',
     VEHICLE_FUEL_STOP = 'soz-core:client:vehicle:fuel:stop',
+    VEHICLE_CHARGE_STOP = 'soz-core:client:vehicle:charge:stop',
     VEHICLE_GET_CLOSEST = 'soz-core:client:vehicle:get-closest',
-    VEHICLE_SPAWN = 'soz-core:client:vehicle:spawn',
     VEHICLE_SYNC_CONDITION = 'soz-core:client:vehicle:sync-condition',
     VEHICLE_UPDATE_DIRT_LEVEL = 'soz-core:client:vehicle:update-dirt-level',
     VEHICLE_GARAGE_HOUSE_OPEN_MENU = 'soz-core:client:vehicle:garage:house:open-menu',
@@ -313,6 +335,9 @@ export enum ClientEvent {
     VEHICLE_SET_TRUNK_STATE = 'soz-core:client:vehicle:set-trunk-state',
     VEHICLE_RADAR_FLASHED = 'soz-core:client:vehicle:radar:flashed',
     VEHICLE_RADAR_TRIGGER = 'soz-core:client:radar:trigger',
+
+    UPW_OPEN_CLOAKROOM = 'soz-core:client:job:upw:open-cloakroom',
+    UPW_CREATE_CHARGER = 'soz-core:client:job:upw:create-charger',
 
     RADAR_TOGGLE_BLIP = 'soz-core:client:radar:toggle-blip',
 
@@ -351,6 +376,9 @@ export enum ClientEvent {
     HUB_REMOVE_STATUS = 'soz-core:client:hub:remove-status',
 
     CRIMI_HOOD = 'soz-core:server:crimi:hood',
+    CRIMI_SMOKE = 'soz-core:server:crimi:smoke',
+
+    EASTER_EAR_TOGGLE = 'soz-core:server:easter:toogle-ear',
 }
 
 export enum GameEvent {
@@ -385,6 +413,7 @@ export enum NuiEvent {
     AdminMenuPlayerHandleOpenGunSmith = 'soz-core:client:admin:handle-open-gunsmith',
     AdminMenuPlayerHandleInjuriesUpdate = 'soz-core:client:admin:handle-injuries-update',
     AdminMenuPlayerHandleSetReputation = 'soz-core:client:admin:set-reputation',
+    AdminMenuPlayerHandleResetCrimi = 'soz-core:client:admin:reset-crimi',
     AdminResetHealthData = 'soz-core:client:admin:reset-health-data',
     AdminSetGodMode = 'soz-core:client:admin:set-god-mode',
     AdminSetJob = 'soz-core:client:admin:set-job',
@@ -444,8 +473,32 @@ export enum NuiEvent {
     MenuClosed = 'menu_closed',
     JobBossShopBuyItem = 'soz-core:nui:job:boss-shop:buy-item',
     OilAskStationPrice = 'soz-core:nui:job:oil:ask-station-price',
+    UpwDisplayBlips = 'soz-core:nui:job:upw:display-blips',
 
     PanelClosed = 'soz-core:nui:panel:closed',
+    PlayerGetMugshot = 'soz-core:nui:player:get-mugshot',
+    PlayerMenuOpenKeys = 'soz-core:nui:player:menu:open-keys',
+    PlayerMenuCardShow = 'soz-core:nui:player:menu:card-show',
+    PlayerMenuCardSee = 'soz-core:nui:player:menu:card-see',
+    PlayerMenuInvoicePay = 'soz-core:nui:player:menu:pay-invoice',
+    PlayerMenuInvoiceDeny = 'soz-core:nui:player:menu:deny-invoice',
+    PlayerMenuClothConfigUpdate = 'soz-core:nui:player:menu:cloth-config-update',
+    PlayerMenuAnimationPlay = 'soz-core:nui:player:menu:animation-play',
+    PlayerMenuAnimationSetWalk = 'soz-core:nui:player:menu:animation-set-walk',
+    PlayerMenuAnimationSetMood = 'soz-core:nui:player:menu:animation-set-mood',
+    PlayerMenuAnimationStop = 'soz-core:nui:player:menu:animation-stop',
+    PlayerMenuAnimationFavorite = 'soz-core:nui:player:menu:animation-favorite',
+    PlayerMenuAnimationFavoriteDelete = 'soz-core:nui:player:menu:animation-favorite-delete',
+    PlayerMenuHudSetGlobal = 'soz-core:nui:player:menu:hud-set-global',
+    PlayerMenuHudSetCinematicMode = 'soz-core:nui:player:menu:hud-set-cinematic-mode',
+    PlayerMenuHudSetCinematicCameraActive = 'soz-core:nui:player:menu:hud-set-cinematic-camera-active',
+    PlayerMenuJobGradeCreate = 'soz-core:nui:player:menu:job-grade-create',
+    PlayerMenuJobGradeDelete = 'soz-core:nui:player:menu:job-grade-delete',
+    PlayerMenuJobGradeSetDefault = 'soz-core:nui:player:menu:job-grade-set-default',
+    PlayerMenuJobGradeUpdateSalary = 'soz-core:nui:player:menu:job-grade-update-salary',
+    PlayerMenuJobGradeUpdateWeight = 'soz-core:nui:player:menu:job-grade-update-weight',
+    PlayerMenuJobGradePermissionUpdate = 'soz-core:nui:player:menu:job-grade-permission-update',
+    PlayerMenuVoipReset = 'soz-core:nui:player:menu:voip-reset',
     SetFocusInput = 'soz-core:nui:set-focus-input',
     SetWardrobeOutfit = 'soz-core:nui:set-wardrobe-outfit',
 
@@ -477,6 +530,11 @@ export enum NuiEvent {
     VehicleGarageStoreTrailer = 'soz-core:client:vehicle:garage:store-trailer',
     VehicleGarageShowPlaces = 'soz-core:client:vehicle:garage:show-places',
 
+    UpwGetOrders = 'soz-core:client:job:upw:get-orders',
+    UpwOrder = 'soz-core:client:job:upw:order',
+    UpwGetCatalog = 'soz-core:client:job:upw:get-catalog',
+    UpwCancelOrder = 'soz-core:client:job:upw:cancel-order',
+
     GunSmithRenameWeapon = 'soz-core:client:job:gunsmith:rename-weapon',
     GunSmithPreviewTint = 'soz-core:client:job:gunsmith:preview-tint',
     GunSmithPreviewAnimation = 'soz-core:client:job:gunsmith:preview-animation',
@@ -499,4 +557,10 @@ export enum NuiEvent {
 
     WardrobeElementSelect = 'soz-core:client:wardrobe:element-select',
     WardrobeCustomSave = 'soz-core:client:wardrobe:custom-save',
+
+    EasterShopBuy = 'soz-core:client:eatershop:buy',
+
+    TaxiSetMission = 'soz-core:client:taxi:set-mission',
+    TaxiSetHorodateur = 'soz-core:client:taxi:set-horodateur',
+    TaxiDisplayHorodateur = 'soz-core:client:taxi:display-horodateur',
 }

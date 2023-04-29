@@ -1,4 +1,4 @@
-export enum RpcEvent {
+export enum RpcServerEvent {
     ADMIN_GET_PLAYERS = 'soz-core:admin:get-players',
     ADMIN_GET_CHARACTERS = 'soz-core:admin:get-characters',
     ADMIN_GET_FULL_PLAYERS = 'soz-core:admin:get-full-players',
@@ -23,7 +23,6 @@ export enum RpcEvent {
     OIL_GET_STATION = 'soz-core:job:oil:get-station',
     OIL_GET_STATION_PRICES = 'soz-core:job:oil:get-station-prices',
 
-    PLAYER_GET_HEALTH_BOOK = 'soz-core:player:get-health-book',
     PLAYER_GET_SERVER_STATE = 'soz-core:player:get-server-state',
     PLAYER_GET_JWT_TOKEN = 'soz-core:player:get-jwt-token',
 
@@ -57,6 +56,13 @@ export enum RpcEvent {
 
     INVENTORY_GET_ITEM_BY_SHORTCUT = 'soz-core:inventory:get-item-by-shortcut',
 
+    UPW_GET_FACILITIES = 'soz-core:job:upw:get-facilities',
+    UPW_GET_ORDERS = 'soz-core:job:upw:get-orders',
+    UPW_CANCEL_ORDER = 'soz-core:server:job:upw:cancel-order',
+    UPW_ORDER_VEHICLE = 'soz-core:server:job:upw:order-vehicle',
+    UPW_GET_CATALOG = 'soz-core:server:job:upw:get-catalog',
+    UPW_GET_STATION = 'soz-core:server:job:upw:get-station',
+
     WEAPON_USE_AMMO = 'soz-core:server:weapon:useAmmo',
     WEAPON_SET_LABEL = 'soz-core:server:weapon:setLabel',
     WEAPON_REPAIR = 'soz-core:server:weapon:repair',
@@ -67,6 +73,7 @@ export enum RpcEvent {
 
     VANDALISM_END = 'soz-core:server:vandalism:end',
     VANDALISM_LOAD = 'soz-core:server:vandalism:load',
+    VANDALISM_LOCK = 'soz-core:server:vandalism:lock',
 
     HEIST_CHECK = 'soz-core:server:heist:check',
     HEIST_JEWELRY_IS_ZONE_UNLOCK = 'soz-core:server:heist:jewelry-check-unlock',
@@ -85,5 +92,16 @@ export enum RpcEvent {
     POLICE_ALCOOLLEVEL = 'soz-core:server:police:alcool-level',
     HUB_EXIT_TIME = 'soz-core:server:hub:exit-time',
 
-    BIN_IS_LOCKED = 'soz-core:server:bin:is-locked',
+    BIN_IS_NOT_LOCKED = 'soz-core:server:bin:is-locked',
+
+    LSMC_GET_CURRENT_ORGAN = 'soz-core:server:lsmc:get-organ',
+}
+
+export enum RpcClientEvent {
+    VEHICLE_GET_TYPE = 'soz-core:rpc:client:vehicle:get-type',
+    VEHICLE_SPAWN = 'soz-core:rpc:client:vehicle:spawn',
+    GET_LAST_VEHICLE_SPAWN = 'soz-core:rpc:client:vehicle:get-last-spawn',
+    DELETE_LAST_VEHICLE_SPAWN = 'soz-core:rpc:client:vehicle:delete-last-spawn',
+    VEHICLE_SPAWN_FROM_SERVER = 'soz-core:rpc:client:vehicle:spawn-from-server',
+    VEHICLE_DELETE = 'soz-core:rpc:client:vehicle:delete',
 }

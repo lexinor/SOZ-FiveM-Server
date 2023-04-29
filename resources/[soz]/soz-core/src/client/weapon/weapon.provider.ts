@@ -8,7 +8,7 @@ import { Tick, TickInterval } from '../../core/decorators/tick';
 import { emitRpc } from '../../core/rpc';
 import { ClientEvent, ServerEvent } from '../../shared/event';
 import { InventoryItem } from '../../shared/item';
-import { RpcEvent } from '../../shared/rpc';
+import { RpcServerEvent } from '../../shared/rpc';
 import { ExplosionMessage, GlobalWeaponConfig, GunShotMessage, WeaponName } from '../../shared/weapons/weapon';
 import { PhoneService } from '../phone/phone.service';
 import { ProgressService } from '../progress.service';
@@ -52,6 +52,22 @@ export class WeaponProvider {
         SetWeaponsNoAutoswap(true);
 
         await this.weapon.clear();
+
+        SetWeaponDamageModifier(WeaponName.BAT, 0.2);
+        SetWeaponDamageModifier(WeaponName.CROWBAR, 0.2);
+        SetWeaponDamageModifier(WeaponName.GOLFCLUB, 0.2);
+        SetWeaponDamageModifier(WeaponName.HAMMER, 0.2);
+        SetWeaponDamageModifier(WeaponName.NIGHTSTICK, 0.2);
+        SetWeaponDamageModifier(WeaponName.WRENCH, 0.2);
+        SetWeaponDamageModifier(WeaponName.KNUCKLE, 0.2);
+        SetWeaponDamageModifier(WeaponName.POOLCUE, 0.2);
+
+        SetWeaponDamageModifier('AMMO_SNOWBALL', 0.0);
+        SetWeaponDamageModifier('AMMO_FIREWORK', 0.0);
+        SetWeaponDamageModifier(WeaponName.SMOKEGRENADE, 0.0);
+        SetWeaponDamageModifier(WeaponName.BZGAS, 0.1);
+
+        SetWeaponDamageModifier(WeaponName.MUSKET, 0.5);
     }
 
     @OnEvent(ClientEvent.PLAYER_ON_DEATH)
@@ -81,7 +97,7 @@ export class WeaponProvider {
         LocalPlayer.state.set('inv_busy', true, true);
 
         const weapon = await emitRpc<InventoryItem | null>(
-            RpcEvent.WEAPON_USE_AMMO,
+            RpcServerEvent.WEAPON_USE_AMMO,
             this.weapon.getCurrentWeapon().slot,
             ammoName,
             this.weapon.getMaxAmmoInClip()
@@ -155,7 +171,7 @@ export class WeaponProvider {
         }
 
         const weaponGroup = GetWeapontypeGroup(weapon.name);
-        emitNet(ServerEvent.WEAPON_SHOOTING, weapon.slot, weaponGroup);
+        emitNet(ServerEvent.WEAPON_SHOOTING, weapon.slot, weaponGroup, GetAmmoInClip(player, weapon.name)[1]);
 
         if (
             !messageExclude.includes(GetHashKey(weapon.name)) &&
@@ -163,22 +179,27 @@ export class WeaponProvider {
             Math.random() < 0.6 &&
             Date.now() - this.lastPoliceCall > 120000
         ) {
-            this.lastPoliceCall = Date.now();
             const coords = GetEntityCoords(player);
             const [street, street2] = GetStreetNameAtCoord(coords[0], coords[1], coords[2]);
             let name = GetStreetNameFromHashKey(street);
             if (street2) {
                 name += ' et ' + GetStreetNameFromHashKey(street2);
             }
-            const zone = GetLabelText(GetNameOfZone(coords[0], coords[1], coords[2]));
 
-            TriggerServerEvent('phone:sendSocietyMessage', 'phone:sendSocietyMessage:' + uuidv4(), {
-                anonymous: true,
-                number: '555-POLICE',
-                message: `${zone}: ${getRandomItem(GunShotMessage).replace('${0}', name)}`,
-                position: true,
-                overrideIdentifier: 'System',
-            });
+            const zoneID = GetNameOfZone(coords[0], coords[1], coords[2]);
+
+            if ('ARMYB' != zoneID) {
+                const zone = GetLabelText(zoneID);
+                this.lastPoliceCall = Date.now();
+
+                TriggerServerEvent('phone:sendSocietyMessage', 'phone:sendSocietyMessage:' + uuidv4(), {
+                    anonymous: true,
+                    number: '555-POLICE',
+                    message: `${zone}: ${getRandomItem(GunShotMessage).replace('${0}', name)}`,
+                    position: true,
+                    overrideIdentifier: 'System',
+                });
+            }
         }
         await this.weapon.recoil();
     }

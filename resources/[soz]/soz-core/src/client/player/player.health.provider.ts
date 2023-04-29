@@ -11,7 +11,7 @@ import { Feature, isFeatureEnabled } from '../../shared/features';
 import { PlayerData, PlayerServerState, PlayerServerStateExercise } from '../../shared/player';
 import { getDistance, Vector3, Vector4 } from '../../shared/polyzone/vector';
 import { getRandomInt, getRandomItem } from '../../shared/random';
-import { RpcEvent } from '../../shared/rpc';
+import { RpcServerEvent } from '../../shared/rpc';
 import { AnimationService } from '../animation/animation.service';
 import { BlipFactory } from '../blip';
 import { Notifier } from '../notifier';
@@ -287,7 +287,7 @@ export class PlayerHealthProvider {
     }
 
     private async doStrengthExercise(type: keyof PlayerServerStateExercise) {
-        const playerState = await emitRpc<PlayerServerState>(RpcEvent.PLAYER_GET_SERVER_STATE);
+        const playerState = await emitRpc<PlayerServerState>(RpcServerEvent.PLAYER_GET_SERVER_STATE);
 
         if (playerState.exercise.completed === 0) {
             this.notifier.notify(
@@ -464,6 +464,14 @@ export class PlayerHealthProvider {
 
         const playerPed = PlayerPedId();
         const currentVehicle = GetVehiclePedIsIn(playerPed, false);
+
+        const IsInVehicleNotABike =
+            IsPedInAnyVehicle(playerPed, false) && !IsThisModelABicycle(GetEntityModel(currentVehicle));
+
+        if (IsInVehicleNotABike) {
+            return;
+        }
+
         const isRunning = IsPedRunning(playerPed) || IsPedSprinting(playerPed);
         const isSwimming = IsPedSwimming(playerPed);
         const isInBicycle = currentVehicle && IsThisModelABicycle(GetEntityModel(currentVehicle));
@@ -499,26 +507,6 @@ export class PlayerHealthProvider {
                 SetPlayerStamina(playerId, stamina - (100 - player.metadata.max_stamina));
             }
         }
-    }
-
-    @OnEvent(ClientEvent.PLAYER_REQUEST_HEALTH_BOOK)
-    async requestHealthBook(target: number, action: 'see' | 'show'): Promise<void> {
-        if (action === 'show') {
-            TriggerServerEvent(ServerEvent.PLAYER_SHOW_HEALTH_BOOK, target);
-
-            return;
-        }
-
-        const targetPlayer = await emitRpc<PlayerData | null>(RpcEvent.PLAYER_GET_HEALTH_BOOK, target);
-
-        if (null !== targetPlayer) {
-            this.nuiDispatch.dispatch('health_book', 'ShowHealthBook', targetPlayer);
-        }
-    }
-
-    @OnEvent(ClientEvent.IDENTITY_HIDE)
-    async identityHide(): Promise<void> {
-        this.nuiDispatch.dispatch('health_book', 'HideHealthBook');
     }
 
     @Once()

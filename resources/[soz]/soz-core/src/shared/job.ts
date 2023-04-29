@@ -56,18 +56,44 @@ export enum JobPermission {
     BennysOrder = 'order',
     MdrViewOtherJobs = 'view-other-jobs',
     MdrViewCitizenData = 'view-citizen-data',
+    UpwOrder = 'order',
+    UpwChangePrice = 'upw-change-price',
 }
+
+export const JobLabel: Record<JobType, string> = {
+    [JobType.Unemployed]: 'Sans emploi',
+    [JobType.Adsl]: 'ADSL',
+    [JobType.Delivery]: 'Fougère Prime',
+    [JobType.Religious]: 'InfoChat',
+    [JobType.Scrapper]: 'DeMetal Company',
+    [JobType.LSPD]: 'Los Santos Police Department',
+    [JobType.BCSO]: 'Blaine County Sheriff Office',
+    [JobType.LSMC]: 'Los Santos Medical Center',
+    [JobType.Taxi]: 'Carl Jr Services',
+    [JobType.Food]: 'Château Marius',
+    [JobType.News]: 'Twitch News',
+    [JobType.Garbage]: 'BlueBird',
+    [JobType.Oil]: 'Michel Transport Petrol',
+    [JobType.CashTransfer]: 'STONK Depository',
+    [JobType.Bennys]: 'New Gahray',
+    [JobType.Upw]: 'Unexpected Power & Water',
+    [JobType.Pawl]: 'Pipe And Wooden Leg',
+    [JobType.Ffs]: 'Fight For Style',
+    [JobType.Baun]: 'Bahama Unicorn',
+    [JobType.FBI]: 'Federal Bureau of Investigation',
+    [JobType.MDR]: 'Mandatory',
+};
+
+export type JobPermissionData = {
+    label: string;
+};
 
 export type Job = {
     // Must use the getJobs method to generate the id from the object.
     id: JobType;
     grades: JobGrade[];
     label: string;
-    permissions: {
-        [key: string]: {
-            label: string;
-        };
-    };
+    permissions: Partial<Record<JobPermission, JobPermissionData>>;
     platePrefix?: string;
     // TODO: Complete when necessary
     temporary?: any;
@@ -86,7 +112,7 @@ export type JobGrade = {
     salary: number;
     owner: number;
     is_default: boolean;
-    permissions: string[];
+    permissions: JobPermission[];
 };
 
 export type JobCloakroomZoneData = {

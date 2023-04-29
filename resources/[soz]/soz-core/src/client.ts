@@ -10,6 +10,7 @@ import { BankModule } from './client/bank/bank.module';
 import { DrivingSchoolModule } from './client/driving-school/ds.module';
 import { FactoryModule } from './client/factory/factory.module';
 import { HousingModule } from './client/housing/housing.module';
+import { HudModule } from './client/hud/hud.module';
 import { InventoryModule } from './client/inventory/inventory.module';
 import { ItemModule } from './client/item/item.module';
 import { BaunModule } from './client/job/baun/baun.module';
@@ -22,6 +23,8 @@ import { MandatoryModule } from './client/job/mdr/mdr.module';
 import { OilModule } from './client/job/oil/oil.module';
 import { PoliceModule } from './client/job/police/police.module';
 import { StonkModule } from './client/job/stonk/stonk.module';
+import { TaxiModule } from './client/job/taxi/taxi.module';
+import { UpwModule } from './client/job/upw/upw.module';
 import { NuiModule } from './client/nui/nui.module';
 import { ObjectModule } from './client/object/object.module';
 import { PlayerModule } from './client/player/player.module';
@@ -36,13 +39,19 @@ import { WeatherModule } from './client/weather/weather.module';
 import { WorldModule } from './client/world/world.module';
 import { ZEventModule } from './client/zevent/zevent.module';
 import { Application } from './core/application';
-import { unloadContainer } from './core/container';
+import { setService, unloadContainer } from './core/container';
 import { ProviderClientLoader } from './core/loader/provider.client.loader';
+import { ChainMiddlewareEventClientFactory } from './core/middleware/middleware.event.client';
+import { ChainMiddlewareTickClientFactory } from './core/middleware/middleware.tick.client';
 
 async function bootstrap() {
+    setService('MiddlewareFactory', ChainMiddlewareEventClientFactory);
+    setService('MiddlewareTickFactory', ChainMiddlewareTickClientFactory);
+
     const app = await Application.create(
         ProviderClientLoader,
         RepositoryModule,
+        HudModule,
         WorldModule,
         ObjectModule,
         PlayerModule,
@@ -74,6 +83,8 @@ async function bootstrap() {
         HousingModule,
         MandatoryModule,
         PoliceModule,
+        UpwModule,
+        TaxiModule,
         ...PrivateModules
     );
 

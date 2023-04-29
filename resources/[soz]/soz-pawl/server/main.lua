@@ -274,17 +274,13 @@ RegisterNetEvent("pawl:server:craft", function(identifier)
     end
 end)
 
-exports("GetPawlMetrics", function()
-    local metrics = {}
-
-    -- Degradation Level
-    metrics["degradation_percent"] = {{value = GetDegradationPercentage()}}
+exports("GetMetrics", function()
+    local metrics = {degradation_percent = GetDegradationPercentage(), fields = {}}
 
     -- Fields
     for identifier, field in pairs(Fields) do
         local metric = {["identifier"] = identifier, value = field:GetTrees() - field:GetCuttedTrees()}
-
-        metrics[identifier] = {metric}
+        table.insert(metrics.fields, metric)
     end
 
     return metrics

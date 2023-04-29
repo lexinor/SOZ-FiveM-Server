@@ -8,8 +8,8 @@ import { ClientEvent, ServerEvent } from '../../shared/event';
 import { FuelStation, FuelStationType, FuelType } from '../../shared/fuel';
 import { JobType } from '../../shared/job';
 import { Vector3 } from '../../shared/polyzone/vector';
-import { RpcEvent } from '../../shared/rpc';
-import { VehicleClass } from '../../shared/vehicle/vehicle';
+import { RpcServerEvent } from '../../shared/rpc';
+import { isVehicleModelElectric, VehicleClass } from '../../shared/vehicle/vehicle';
 import { AnimationService } from '../animation/animation.service';
 import { BlipFactory } from '../blip';
 import { Notifier } from '../notifier';
@@ -287,6 +287,15 @@ export class VehicleFuelProvider {
                     if (GetEntityHealth(entity) <= 0) {
                         return false;
                     }
+                    const model = GetEntityModel(entity);
+
+                    if (
+                        !IsThisModelAHeli(model) &&
+                        !IsThisModelAPlane(model) &&
+                        !this.vehicleService.checkBackOfVehicle(entity)
+                    ) {
+                        return false;
+                    }
 
                     return this.currentStationPistol !== null;
                 },
@@ -317,7 +326,10 @@ export class VehicleFuelProvider {
             return;
         }
 
-        if ((IsThisModelAHeli(model) || IsThisModelAPlane(model)) && station.fuel === FuelType.Essence) {
+        if (
+            (IsThisModelAHeli(model) || IsThisModelAPlane(model) || isVehicleModelElectric(model)) &&
+            station.fuel === FuelType.Essence
+        ) {
             this.notifier.notify("~r~Vous ne pouvez pas remplir ce véhicule avec de l'essence.", 'error');
             await this.disableStationPistol();
 
@@ -331,7 +343,7 @@ export class VehicleFuelProvider {
             return;
         }
 
-        const refreshStation = await emitRpc<FuelStation>(RpcEvent.OIL_GET_STATION, station.id);
+        const refreshStation = await emitRpc<FuelStation>(RpcServerEvent.OIL_GET_STATION, station.id);
 
         if (refreshStation.stock <= 0) {
             this.notifier.notify("La station ne contient pas assez d'essence.", 'error');
@@ -566,7 +578,7 @@ export class VehicleFuelProvider {
             return;
         }
 
-        const refreshStation = await emitRpc<FuelStation>(RpcEvent.OIL_GET_STATION, station.id);
+        const refreshStation = await emitRpc<FuelStation>(RpcServerEvent.OIL_GET_STATION, station.id);
 
         TaskTurnPedToFaceEntity(PlayerPedId(), entity, 500);
         await wait(500);
@@ -618,8 +630,26 @@ export class VehicleFuelProvider {
             return;
         }
 
-        const multiplier = VehicleClassFuelMultiplier[GetVehicleClass(vehicle)] || 1.0;
-        const consumedFuel = GetVehicleCurrentRpm(vehicle) * 0.084 * multiplier;
+        let multiplier = VehicleClassFuelMultiplier[GetVehicleClass(vehicle)] || 1.0;
+        let rpm = GetVehicleCurrentRpm(vehicle);
+
+        if (isVehicleModelElectric(model)) {
+            if (rpm < 0.25) {
+                rpm = 0.08;
+            } else if (rpm < 0.35) {
+                rpm = rpm * 0.4;
+            } else if (rpm < 0.55) {
+                rpm = rpm * 0.45;
+            } else if (rpm < 0.7) {
+                rpm = rpm * 0.5;
+            } else if (rpm < 0.8) {
+                rpm = rpm * 0.75;
+            }
+
+            multiplier = 0.5;
+        }
+
+        const consumedFuel = rpm * 0.084 * multiplier;
         const consumedOil = consumedFuel / 12;
 
         const state = this.vehicleService.getVehicleState(vehicle);
@@ -643,6 +673,10 @@ export class VehicleFuelProvider {
         }
 
         SetVehicleFuelLevel(vehicle, newFuel);
+
+        if (newFuel <= 0.1) {
+            SetVehicleEngineOn(vehicle, false, true, true);
+        }
 
         if (newOil <= 0.1) {
             const newEngineHealth = Math.max(0, GetVehicleEngineHealth(vehicle) - 50);

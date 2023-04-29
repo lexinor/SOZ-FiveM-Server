@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 
-import { NuiEvent } from '../../../../shared/event';
+import { NuiEvent, ServerEvent } from '../../../../shared/event';
 import { MenuType } from '../../../../shared/nui/menu';
 import { fetchNui, triggerServerEvent } from '../../../fetch';
 import { usePlayer } from '../../../hook/data';
@@ -42,7 +42,7 @@ export const MenuBennys: FunctionComponent<MenuBennysProps> = ({ data }) => {
     }
 
     const onConfirm = (item, props) => {
-        triggerServerEvent('job:server:placeProps', item, props);
+        triggerServerEvent(ServerEvent.JOBS_PLACE_PROPS, item, props);
     };
 
     const onUpgradeVehicle = () => {
@@ -67,7 +67,7 @@ export const MenuBennys: FunctionComponent<MenuBennysProps> = ({ data }) => {
                                 props: 'prop_roadcone02a',
                             }}
                         >
-                            Cone de circulation
+                            Cône de circulation
                         </MenuItemSelectOption>
                     </MenuItemSelect>
                 </MenuContent>

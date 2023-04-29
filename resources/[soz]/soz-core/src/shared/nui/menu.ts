@@ -1,8 +1,11 @@
+import { PlayerPersonalMenuData } from '@public/shared/nui/player';
+
 import { AdminMenuStateProps } from '../../nui/components/Admin/AdminMenu';
 import { WardrobeMenuData } from '../cloth';
 import { DrivingSchoolMenuData } from '../driving-school';
 import { FuelType } from '../fuel';
 import { HousingUpgradesMenuData } from '../housing/menu';
+import { MenuUpwData, UpwOrderMenuData } from '../job/upw';
 import { BossShopMenu, ShopProduct } from '../shop';
 import { GarageMenuData } from '../vehicle/garage';
 import { VehicleCustomMenuData } from '../vehicle/modification';
@@ -43,6 +46,8 @@ export enum MenuType {
     HousingUpgrades = 'housing_upgrades',
     Garage = 'garage_menu',
     JobBennys = 'job_bennys',
+    JobUpw = 'job_upw',
+    UpwOrderMenu = 'upw_order',
     OilSetStationPrice = 'oil_set_station_price',
     SetHealthState = 'set_health_state',
     StonkJobMenu = 'stonk_job',
@@ -55,6 +60,10 @@ export enum MenuType {
     LsmcPharmacy = 'lsmc_pharmacy',
     MandatoryJobMenu = 'mdr_job',
     IllegalShop = 'illegal_shop',
+    EasterShop = 'easter_shop',
+    TaxiJobMenu = 'taxi_job',
+    PlayerPersonal = 'player_personal',
+    LsmcJobMenu = 'lsmc_job_menu',
 }
 
 export interface MenuTypeMap extends Record<MenuType, any> {
@@ -71,6 +80,8 @@ export interface MenuTypeMap extends Record<MenuType, any> {
     [MenuType.JobBennys]: {
         insideUpgradeZone: boolean;
     };
+    [MenuType.JobUpw]: MenuUpwData;
+    [MenuType.UpwOrderMenu]: UpwOrderMenuData;
     [MenuType.OilSetStationPrice]: Record<FuelType, number>;
     [MenuType.SetHealthState]: number;
     [MenuType.Vehicle]: VehicleMenuData;
@@ -82,4 +93,8 @@ export interface MenuTypeMap extends Record<MenuType, any> {
     [MenuType.LsmcPharmacy]: never;
     [MenuType.MandatoryJobMenu]: any;
     [MenuType.IllegalShop]: Map<string, ShopProduct[]>;
+    [MenuType.EasterShop]: ShopProduct[];
+    [MenuType.TaxiJobMenu]: any;
+    [MenuType.PlayerPersonal]: PlayerPersonalMenuData;
+    [MenuType.LsmcJobMenu]: any;
 }

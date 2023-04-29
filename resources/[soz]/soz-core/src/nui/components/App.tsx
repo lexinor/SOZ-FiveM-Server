@@ -12,7 +12,7 @@ import { useNuiEvent } from '../hook/nui';
 import { store } from '../store';
 import { AudioApp } from './Audio/AudioApp';
 import { RepairApp } from './Bennys/RepairApp';
-import { HealthBookApp } from './HealthBook/HealthBookApp';
+import { CardApp } from './Card/CardApp';
 import { InputApp } from './Input/InputApp';
 import { MenuApp } from './Menu/MenuApp';
 import { PanelApp } from './Panel/PanelApp';
@@ -20,6 +20,7 @@ import { BreathAnalyzerApp } from './Police/BreathAnalyzer';
 import { RadarApp } from './Police/RadarApp';
 import { ProgressApp } from './Progress/ProgressApp';
 import { StateApp } from './StateApp';
+import { TaxiHorodateurApp } from './Taxi/TaxiHorodateurApp';
 
 export const App: FunctionComponent = () => {
     const [hide, setHide] = useState(false);
@@ -37,7 +38,7 @@ export const App: FunctionComponent = () => {
             <div className={classes}>
                 <StateApp />
                 <MenuApp />
-                <HealthBookApp />
+                <CardApp />
                 <AudioApp />
                 <ProgressApp />
                 <PanelApp />
@@ -49,6 +50,7 @@ export const App: FunctionComponent = () => {
                 <BreathAnalyzerApp />
                 <CraftingApp />
                 <HoodApp />
+                <TaxiHorodateurApp />
             </div>
         </Provider>
     );

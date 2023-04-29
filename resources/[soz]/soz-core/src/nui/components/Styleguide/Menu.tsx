@@ -1,6 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 import { CheckIcon } from '@heroicons/react/solid';
-import { useIsOverflow } from '@public/nui/hook/overflow';
 import {
     createDescendantContext,
     Descendant,
@@ -269,7 +268,7 @@ const MenuItemContainer: FunctionComponent<MenuItemProps> = ({
                 ref.current.scrollIntoView();
             }
         }
-    }, [isSelected, ref]);
+    }, [isSelected, ref, description]);
 
     useEnter(() => {
         if (!isSelected) {
@@ -366,6 +365,7 @@ type MenuItemCheckboxProps = PropsWithChildren<{
     onChange?: (value: boolean) => void;
     checked?: boolean;
     disabled?: boolean;
+    description?: string;
 }>;
 
 export const MenuItemCheckbox: FunctionComponent<MenuItemCheckboxProps> = ({
@@ -374,6 +374,7 @@ export const MenuItemCheckbox: FunctionComponent<MenuItemCheckboxProps> = ({
     checked = false,
     onSelected,
     disabled = false,
+    description = null,
 }) => {
     const [isChecked, setIsChecked] = useState(checked);
 
@@ -383,7 +384,7 @@ export const MenuItemCheckbox: FunctionComponent<MenuItemCheckboxProps> = ({
     };
 
     return (
-        <MenuItemContainer onSelected={onSelected} onConfirm={onConfirm} disabled={disabled}>
+        <MenuItemContainer description={description} onSelected={onSelected} onConfirm={onConfirm} disabled={disabled}>
             <div className="flex justify-between items-center">
                 <h3>{children}</h3>
                 <div className="border border-white w-5 h-5 rounded bg-black/20">
@@ -400,12 +401,14 @@ type MenuItemSubMenuLinkProps = PropsWithChildren<{
     id: string;
     onSelected?: () => void;
     disabled?: boolean;
+    description?: string;
 }>;
 
 export const MenuItemSubMenuLink: FunctionComponent<MenuItemSubMenuLinkProps> = ({
     children,
     id,
     onSelected,
+    description = null,
     disabled = false,
 }) => {
     const location = useLocation();
@@ -425,8 +428,14 @@ export const MenuItemSubMenuLink: FunctionComponent<MenuItemSubMenuLinkProps> = 
                 })
             }
             disabled={disabled}
+            description={description}
         >
-            {children}
+            <div className="flex items-center justify-between">
+                <div>{children}</div>
+                <div>
+                    <ChevronRightIcon className="h-5 w-5 p-0.5 ml-2 bg-black/20 rounded-full" />
+                </div>
+            </div>
         </MenuItemContainer>
     );
 };
@@ -584,10 +593,6 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
     const [activeOptionIndex, setActiveOptionIndex] = useState(0);
     const [activeValue, setActiveValue] = useState(value);
     const { setDescription } = useContext(MenuContext);
-    const overflowRef = useRef<HTMLDivElement>(null);
-    const [isTitleOverflow, setIsTitleOverflow] = useState(false);
-
-    useIsOverflow(overflowRef, setIsTitleOverflow);
 
     const onItemConfirm = useCallback(() => {
         onConfirm && onConfirm(activeOptionIndex, activeValue);
@@ -597,11 +602,7 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
         'justify-between': !showAllOptions || useGrid,
     });
 
-    const classNameTitleContainer = cn('overflow-hidden flex');
     const classNameTitle = cn('pr-2 truncate');
-    const classNameTitleDefile = cn(
-        'inline-block whitespace-nowrap scroll-pl-[100%] scroll-pr-[2em] animate-defilement'
-    );
 
     const classNameList = cn({
         'ml-4': showAllOptions && !alignRight,
@@ -647,19 +648,12 @@ export const MenuItemSelect: FunctionComponent<MenuItemSelectProps> = ({
                     <div className="w-full">
                         <div className={classNameContainer}>
                             <h3
-                                ref={overflowRef}
-                                className={isTitleOverflow ? classNameTitleContainer : classNameTitle}
+                                className={classNameTitle}
                                 style={{
                                     width: showAllOptions ? 'auto' : `${titleWidth}%`,
                                 }}
                             >
-                                {isTitleOverflow && (
-                                    <>
-                                        <span className={classNameTitleDefile}>{title}&nbsp;&nbsp;&nbsp;</span>
-                                        <span className={classNameTitleDefile}>{title}&nbsp;&nbsp;&nbsp;</span>
-                                    </>
-                                )}
-                                {!isTitleOverflow && title}
+                                {title}
                             </h3>
                             <div
                                 className={classNameList}
@@ -777,6 +771,7 @@ const useSelectOption = (
     helper?: ReactNode,
     helperRef?: any
 ): [(value) => void, boolean, boolean, (value) => void, boolean] => {
+    const isItemSelected = useContext(MenuSelectedContext);
     const { activeOptionIndex, distance, setDescription, setActiveOptionIndex, showAllOptions, activeValue } =
         useContext(MenuItemSelectContext);
     const ref = useRef(null);
@@ -806,7 +801,7 @@ const useSelectOption = (
     }, [setActiveOptionIndex, index]);
 
     useEffect(() => {
-        if (isSelected) {
+        if (isItemSelected && isSelected) {
             onSelected && onSelected();
             setDescription(description);
         }

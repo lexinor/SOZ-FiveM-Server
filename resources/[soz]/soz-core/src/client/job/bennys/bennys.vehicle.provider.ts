@@ -1,3 +1,5 @@
+import { isVehicleModelElectric } from '@public/shared/vehicle/vehicle';
+
 import { Once, OnceStep, OnEvent, OnNuiEvent } from '../../../core/decorators/event';
 import { Inject } from '../../../core/decorators/injectable';
 import { Provider } from '../../../core/decorators/provider';
@@ -10,7 +12,7 @@ import { MenuType } from '../../../shared/nui/menu';
 import { BoxZone } from '../../../shared/polyzone/box.zone';
 import { MultiZone } from '../../../shared/polyzone/multi.zone';
 import { Vector3 } from '../../../shared/polyzone/vector';
-import { RpcEvent } from '../../../shared/rpc';
+import { RpcServerEvent } from '../../../shared/rpc';
 import { VehicleConfiguration } from '../../../shared/vehicle/modification';
 import { Notifier } from '../../notifier';
 import { NuiDispatch } from '../../nui/nui.dispatch';
@@ -201,6 +203,10 @@ export class BennysVehicleProvider {
                         return false;
                     }
 
+                    if (isVehicleModelElectric(GetEntityModel(entity))) {
+                        return false;
+                    }
+
                     return player.job.onduty && player.job.id === JobType.Bennys;
                 },
             },
@@ -308,7 +314,7 @@ export class BennysVehicleProvider {
         if (state.id) {
             const vehicleNetworkId = NetworkGetNetworkIdFromEntity(vehicleEntityId);
             vehicleConfiguration = await emitRpc<VehicleConfiguration>(
-                RpcEvent.VEHICLE_CUSTOM_GET_MODS,
+                RpcServerEvent.VEHICLE_CUSTOM_GET_MODS,
                 vehicleNetworkId
             );
         }
@@ -450,6 +456,7 @@ export class BennysVehicleProvider {
         }
 
         const state = this.vehicleService.getVehicleState(vehicle);
+        const model = GetEntityModel(vehicle);
 
         const doorExist = [];
 
@@ -474,6 +481,7 @@ export class BennysVehicleProvider {
             condition: state.condition,
             doors: doorExist,
             windows: windowExist,
+            isElectric: isVehicleModelElectric(model),
         });
     }
 }

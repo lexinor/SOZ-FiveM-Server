@@ -2,7 +2,7 @@ import { SozRole } from '@core/permissions';
 import { Talent } from '@private/shared/talent';
 
 import { ClothConfig } from './cloth';
-import { Disease } from './disease';
+import { Disease, Organ } from './disease';
 import { InventoryItem } from './item';
 import { JobType } from './job';
 import { Halloween2022 } from './story/halloween2022';
@@ -10,9 +10,8 @@ import { Halloween2022 } from './story/halloween2022';
 export type QBCorePlayer = {
     Functions: {
         SetMetaData: (key: string, val: any) => void;
-        Save: () => void;
+        SetMetaDatas: (data: Record<string, any>) => void;
         UpdateMaxWeight: () => void;
-        UpdatePlayerData: () => void;
         AddMoney: (type: 'money' | 'marked_money', amount: number) => boolean;
         RemoveMoney: (type: 'money' | 'marked_money', amount: number) => boolean;
         SetClothConfig: (config: ClothConfig, skipApply: boolean) => void;
@@ -23,6 +22,7 @@ export type QBCorePlayer = {
 };
 
 export type PlayerData = {
+    address: string;
     apartment: any;
     citizenid: string;
     license: string;
@@ -51,10 +51,17 @@ export type Skin = {
     };
 };
 
+export const PlayerPedHash = {
+    Male: 1885233650,
+    Female: -1667301416,
+};
+
 export type PlayerCharInfo = {
     firstname: string;
     lastname: string;
     account: string;
+    gender: number;
+    phone: string;
 };
 
 export type PlayerJob = {
@@ -122,6 +129,7 @@ export type PlayerMetadata = PlayerHealthBook & {
     godmode: boolean;
     isdead: boolean;
     ishandcuffed: boolean;
+    inlaststand: boolean;
     health: number;
     hunger: number;
     thirst: number;
@@ -140,7 +148,7 @@ export type PlayerMetadata = PlayerHealthBook & {
         current: number;
         hidden: boolean;
     };
-    organ: 'foie' | 'rein' | null;
+    organ: Organ | null;
     walk: string | null;
     disease: Disease | null;
     last_disease_at: number | null;
@@ -160,4 +168,5 @@ export type PlayerMetadata = PlayerHealthBook & {
     injuries_count: number;
     injuries_date: number;
     itt: boolean;
+    hazmat: boolean;
 };

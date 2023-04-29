@@ -10,6 +10,7 @@ import { clsx } from 'clsx';
 import { DndContext, rectIntersection } from '@dnd-kit/core';
 import { useInventoryRow } from '../../../hooks/useInventoryRow';
 import { handleSortInventory } from '../../../hooks/handleSortInventory';
+import { getKeyModifier } from '../../../hooks/getKeyModifier';
 
 export const PlayerContainer = () => {
     const [display, setDisplay] = useState<boolean>(false);
@@ -70,6 +71,8 @@ export const PlayerContainer = () => {
                     console.error(e, event.data.playerInventory, event.data.playerMoney);
                     closeNUI(() => closeMenu());
                 }
+            } else if (event.data.action === 'closeInventory') {
+                closeNUI(() => closeMenu());
             }
         },
         [setDisplay, closeMenu, setPlayerMoney, setPlayerInventory, setPlayerShortcuts]
@@ -86,6 +89,8 @@ export const PlayerContainer = () => {
 
     const handleDragAndDrop = useCallback((event: any) => {
             if (!event.active.data.current) return;
+            const keyEvent = event?.activatorEvent as KeyboardEvent
+
 
             if (event.over !== null) { // Do a sort in inventory
                 if (event.active.id == 'player_drag_money_' || event.over.id == 'player_money' ) {
@@ -100,6 +105,7 @@ export const PlayerContainer = () => {
                         item: event.active.data.current.item,
                         slot: event.over.data.current.slot,
                         inventory: playerInventory?.id,
+                        keyModifier: getKeyModifier(keyEvent)
                     }),
                 })
                     .then(res => res.json())

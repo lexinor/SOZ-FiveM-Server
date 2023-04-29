@@ -146,6 +146,17 @@ export enum VehicleClass {
     Trains = 21,
 }
 
+export enum VehicleType {
+    Automobile = 'automobile',
+    Bike = 'bike',
+    Boat = 'boat',
+    Helicopter = 'heli',
+    Plane = 'plane',
+    Submarine = 'submarine',
+    Trailer = 'trailer',
+    Train = 'train',
+}
+
 export const getDefaultVehicleCondition = (): VehicleCondition => ({
     bodyHealth: 1000,
     doorStatus: {},
@@ -234,6 +245,7 @@ export const VehicleMaxStock: Record<keyof typeof VehicleCategory, number> = {
     Vans: 6,
     Openwheel: 0,
     Muscle: 3,
+    Electric: 6, // I don't know what this is.
 };
 
 export enum VehicleCategory {
@@ -260,4 +272,53 @@ export enum VehicleCategory {
     Trains = 'Trains',
     Utility = 'Utilitaires',
     Vans = 'Vans',
+    Electric = 'Electriques',
 }
+
+export const VehicleElectricModels: Record<number, string> = {
+    [-1130810103]: 'Dilettante',
+    [544021352]: 'Khamelion',
+    [-1894894188]: 'Surge',
+    [-1622444098]: 'Voltic',
+    [1392481335]: 'Cyclone',
+    [-1848994066]: 'Neon',
+    [-1529242755]: 'Raiden',
+    [1031562256]: 'Tezeract',
+    [-1132721664]: 'Imorgon',
+    [662793086]: 'I-Wagen',
+    [-505223465]: 'Omnis e-GT',
+    [1147287684]: 'Caddy',
+    [1560980623]: 'Airtug',
+    [989294410]: 'Rocket Voltic',
+    [-2066002122]: 'lspdgallardo',
+    [-1963657244]: 'bcsogt500',
+};
+
+export const isVehicleModelElectric = (model: number): boolean => {
+    return VehicleElectricModels[model] != null;
+};
+
+export const VehicleTypeFromClass: Record<VehicleClass, VehicleType> = {
+    [VehicleClass.Compacts]: VehicleType.Automobile,
+    [VehicleClass.Sedans]: VehicleType.Automobile,
+    [VehicleClass.SUVs]: VehicleType.Automobile,
+    [VehicleClass.Coupes]: VehicleType.Automobile,
+    [VehicleClass.Muscle]: VehicleType.Automobile,
+    [VehicleClass.SportsClassics]: VehicleType.Automobile,
+    [VehicleClass.Sports]: VehicleType.Automobile,
+    [VehicleClass.Super]: VehicleType.Automobile,
+    [VehicleClass.Motorcycles]: VehicleType.Bike,
+    [VehicleClass.OffRoad]: VehicleType.Automobile,
+    [VehicleClass.Industrial]: VehicleType.Automobile,
+    [VehicleClass.Utility]: VehicleType.Trailer,
+    [VehicleClass.Vans]: VehicleType.Automobile,
+    [VehicleClass.Cycles]: VehicleType.Bike,
+    [VehicleClass.Boats]: VehicleType.Boat,
+    [VehicleClass.Helicopters]: VehicleType.Helicopter,
+    [VehicleClass.Planes]: VehicleType.Plane,
+    [VehicleClass.Service]: VehicleType.Automobile,
+    [VehicleClass.Emergency]: VehicleType.Automobile,
+    [VehicleClass.Military]: VehicleType.Automobile,
+    [VehicleClass.Commercial]: VehicleType.Automobile,
+    [VehicleClass.Trains]: VehicleType.Train,
+};

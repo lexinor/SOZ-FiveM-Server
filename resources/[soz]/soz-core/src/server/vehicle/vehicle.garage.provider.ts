@@ -4,15 +4,24 @@ import { Once, OnceStep, OnEvent } from '../../core/decorators/event';
 import { Inject } from '../../core/decorators/injectable';
 import { Provider } from '../../core/decorators/provider';
 import { Rpc } from '../../core/decorators/rpc';
+import { Logger } from '../../core/logger';
 import { ServerEvent } from '../../shared/event';
+import { joaat } from '../../shared/joaat';
 import { JobPermission, JobType } from '../../shared/job';
 import { Monitor } from '../../shared/monitor';
 import { PlayerData } from '../../shared/player';
 import { toVector3Object, Vector3, Vector4 } from '../../shared/polyzone/vector';
 import { getRandomItem } from '../../shared/random';
 import { Err, isErr, Ok, Result } from '../../shared/result';
-import { RpcEvent } from '../../shared/rpc';
-import { Garage, GarageType, GarageVehicle, HouseGarageLimits, PlaceCapacity } from '../../shared/vehicle/garage';
+import { RpcServerEvent } from '../../shared/rpc';
+import {
+    Garage,
+    GarageCategory,
+    GarageType,
+    GarageVehicle,
+    HouseGarageLimits,
+    PlaceCapacity,
+} from '../../shared/vehicle/garage';
 import { getDefaultVehicleConfiguration } from '../../shared/vehicle/modification';
 import { PlayerVehicleState } from '../../shared/vehicle/player.vehicle';
 import { getDefaultVehicleCondition, VehicleCategory } from '../../shared/vehicle/vehicle';
@@ -27,6 +36,12 @@ import { GarageRepository } from '../repository/garage.repository';
 import { VehicleRepository } from '../repository/vehicle.repository';
 import { VehicleSpawner } from './vehicle.spawner';
 import { VehicleStateService } from './vehicle.state.service';
+
+const ALLOWED_VEHICLE_TYPE: Record<GarageCategory, string[]> = {
+    [GarageCategory.Car]: ['automobile', 'bike', 'trailer'],
+    [GarageCategory.Air]: ['heli', 'plane'],
+    [GarageCategory.Sea]: ['boat', 'submarine'],
+};
 
 @Provider()
 export class VehicleGarageProvider {
@@ -66,7 +81,10 @@ export class VehicleGarageProvider {
     @Inject(Monitor)
     private monitor: Monitor;
 
-    @Once(OnceStep.DatabaseConnected)
+    @Inject(Logger)
+    private logger: Logger;
+
+    @Once(OnceStep.RepositoriesLoaded)
     public async init(): Promise<void> {
         const queries = `
             UPDATE player_vehicles SET state = 1, garage = 'airportpublic' WHERE state = 0 AND job IS NULL AND category = 'car';
@@ -77,16 +95,18 @@ export class VehicleGarageProvider {
             UPDATE player_vehicles SET garage = 'stonk' WHERE garage = 'cash-transfer';
             UPDATE player_vehicles SET garage = 'pound' WHERE state = 2 AND garage != 'pound';
 
-            UPDATE vehicles v SET v.stock = 8 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Compacts';
-            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Coupes';
-            UPDATE vehicles v SET v.stock = 3 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Muscle';
-            UPDATE vehicles v SET v.stock = 4 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Suvs';
-            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Vans';
-            UPDATE vehicles v SET v.stock = 4 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Off-road';
-            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Sedans';
-            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Motorcycles';
+            UPDATE vehicles v SET v.stock = 14 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Compacts';
+            UPDATE vehicles v SET v.stock = 10 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Coupes';
+            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Muscle';
+            UPDATE vehicles v SET v.stock = 6 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Suvs';
+            UPDATE vehicles v SET v.stock = 10 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Vans';
+            UPDATE vehicles v SET v.stock = 10 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Off-road';
+            UPDATE vehicles v SET v.stock = 14 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Sedans';
+            UPDATE vehicles v SET v.stock = 10 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Motorcycles';
             UPDATE vehicles v SET v.stock = 3 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Helicopters';
             UPDATE vehicles v SET v.stock = 99 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Cycles';
+            UPDATE vehicles v SET v.stock = 2 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.dealership_id = 'luxury';
+            UPDATE vehicles v SET v.stock = 100 - (SELECT COUNT(1) as taken FROM player_vehicles WHERE player_vehicles.vehicle = v.model AND player_vehicles.state != 5)  WHERE v.category = 'Electric';
             UPDATE vehicles v SET v.stock = 0 WHERE v.stock < 0;
         `
             .split(';')
@@ -102,7 +122,7 @@ export class VehicleGarageProvider {
             },
         });
 
-        const garages = await this.garageRepository.refresh();
+        const garages = await this.garageRepository.get();
         const toPound = [];
         const toVoid = [];
 
@@ -155,9 +175,45 @@ export class VehicleGarageProvider {
                 },
             });
         }
+
+        const playerVehicles = await this.prismaService.playerVehicle.findMany();
+
+        for (const v of playerVehicles) {
+            const hash = joaat(v.vehicle.toLowerCase());
+            const currentHash = parseInt(v.hash, 10);
+
+            if (hash !== currentHash) {
+                await this.prismaService.playerVehicle.update({
+                    where: {
+                        id: v.id,
+                    },
+                    data: {
+                        hash: hash.toString(),
+                    },
+                });
+            }
+        }
+
+        const vehicleData = await this.prismaService.vehicle.findMany();
+
+        for (const v of vehicleData) {
+            const hash = joaat(v.model.toLowerCase());
+            const currentHash = v.hash;
+
+            if (hash !== currentHash) {
+                await this.prismaService.vehicle.update({
+                    where: {
+                        model: v.model,
+                    },
+                    data: {
+                        hash: hash,
+                    },
+                });
+            }
+        }
     }
 
-    @Rpc(RpcEvent.VEHICLE_GARAGE_GET_MAX_PLACES)
+    @Rpc(RpcServerEvent.VEHICLE_GARAGE_GET_MAX_PLACES)
     public async getMaxPlaces(source: number, garage: Garage): Promise<number | null> {
         if (garage.type !== GarageType.Private && garage.type !== GarageType.House) {
             return null;
@@ -181,7 +237,7 @@ export class VehicleGarageProvider {
         return 38;
     }
 
-    @Rpc(RpcEvent.VEHICLE_GARAGE_GET_FREE_PLACES)
+    @Rpc(RpcServerEvent.VEHICLE_GARAGE_GET_FREE_PLACES)
     public async getFreePlaces(source: number, id: string, garage: Garage): Promise<number | null> {
         if (garage.type !== GarageType.Private && garage.type !== GarageType.House) {
             return null;
@@ -223,7 +279,7 @@ export class VehicleGarageProvider {
         return Math.max(0, maxPlaces - count);
     }
 
-    @Rpc(RpcEvent.VEHICLE_GARAGE_GET_VEHICLES)
+    @Rpc(RpcServerEvent.VEHICLE_GARAGE_GET_VEHICLES)
     public async getGarageVehicles(source: number, id: string, garage: Garage): Promise<GarageVehicle[]> {
         const player = this.playerService.getPlayer(source);
 
@@ -428,6 +484,18 @@ export class VehicleGarageProvider {
             return;
         }
 
+        const vehicleType = GetVehicleType(vehicleEntityId);
+
+        if (!ALLOWED_VEHICLE_TYPE[garage.category].includes(vehicleType)) {
+            this.notifier.notify(
+                source,
+                `Vous ne pouvez pas ranger ce véhicule dans le garage ${garage.name}.`,
+                'error'
+            );
+
+            return;
+        }
+
         const vehicle = await this.checkCanManageVehicle(player, id, garage, vehicleState.id);
 
         if (isErr(vehicle)) {
@@ -626,12 +694,12 @@ export class VehicleGarageProvider {
                     );
                 }
 
-                if (
-                    await this.vehicleSpawner.spawnPlayerVehicle(source, playerVehicle, [
-                        ...parkingPlace.center,
-                        parkingPlace.heading || 0,
-                    ] as Vector4)
-                ) {
+                const spawnedVehicleId = await this.vehicleSpawner.spawnPlayerVehicle(source, playerVehicle, [
+                    ...parkingPlace.center,
+                    parkingPlace.heading || 0,
+                ] as Vector4);
+
+                if (spawnedVehicleId !== null) {
                     await this.prismaService.playerVehicle.update({
                         where: { id: playerVehicle.id },
                         data: {
@@ -695,7 +763,7 @@ export class VehicleGarageProvider {
 
                 if (appartements.length == 0) {
                     citizenIds.add(player.citizenid);
-                    console.error('no appartements found for property', propertyId);
+                    this.logger.error('no appartements found for property', propertyId);
                 }
 
                 for (const appartement of appartements) {
@@ -706,7 +774,7 @@ export class VehicleGarageProvider {
                     }
                 }
             } else {
-                console.error('property not found', propertyId);
+                this.logger.error('property not found', propertyId);
 
                 citizenIds.add(player.citizenid);
             }

@@ -7,7 +7,9 @@ import { Tick, TickInterval } from '../../core/decorators/tick';
 import { wait } from '../../core/utils';
 import { Feature, isFeatureEnabled } from '../../shared/features';
 import { PollutionLevel } from '../../shared/pollution';
+import { getRandomKeyWeighted } from '../../shared/random';
 import { Forecast, Time, Weather } from '../../shared/weather';
+import { MonitorService } from '../monitor/monitor.service';
 import { Pollution } from '../pollution';
 import { Polluted, SpringAutumn } from './forecast';
 
@@ -22,6 +24,9 @@ export class WeatherProvider {
     @Inject(Pollution)
     private pollution: Pollution;
 
+    @Inject(MonitorService)
+    private monitorService: MonitorService;
+
     @Once()
     onStart(): void {
         GlobalState.blackout ||= false;
@@ -32,9 +37,11 @@ export class WeatherProvider {
         GlobalState.time ||= { hour: 2, minute: 0, second: 0 } as Time;
     }
 
-    @Tick(TickInterval.EVERY_SECOND)
-    advanceTime(): void {
-        const currentTime = { ...(GlobalState.time as Time) };
+    @Tick(TickInterval.EVERY_SECOND, 'weather:time:advance')
+    async advanceTime() {
+        const currentTime = await this.monitorService.doCall('advance_time_get', () => {
+            return { ...(GlobalState.time as Time) };
+        });
 
         currentTime.second += INCREMENT_SECOND;
 
@@ -64,10 +71,12 @@ export class WeatherProvider {
             }
         }
 
-        GlobalState.time = currentTime;
+        await this.monitorService.doCall('advance_time_set', () => {
+            GlobalState.time = currentTime;
+        });
     }
 
-    @Tick(TickInterval.EVERY_FRAME)
+    @Tick(TickInterval.EVERY_FRAME, 'weather:next-weather')
     async updateWeather() {
         await wait((Math.random() * 5 + 10) * 60 * 1000);
 
@@ -167,26 +176,6 @@ export class WeatherProvider {
             transitions = {};
         }
 
-        if (Object.keys(transitions).length === 0) {
-            return 'OVERCAST';
-        }
-
-        let totalWeight = 0;
-
-        for (const weight of Object.values(transitions)) {
-            totalWeight += weight;
-        }
-
-        let random = Math.round(Math.random() * totalWeight);
-
-        for (const [weather, weight] of Object.entries(transitions)) {
-            if (random < weight) {
-                return weather as Weather;
-            }
-
-            random -= weight;
-        }
-
-        return 'OVERCAST';
+        return getRandomKeyWeighted<Weather>(transitions, 'OVERCAST') as Weather;
     }
 }

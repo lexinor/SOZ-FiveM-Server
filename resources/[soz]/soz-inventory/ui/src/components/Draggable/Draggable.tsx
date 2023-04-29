@@ -139,7 +139,7 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
             path += `_${item.metadata?.tier}`
         }
 
-        return `https://nui-img/soz-items/${path}`
+        return `https://cfx-nui-soz-core/public/images/items/${path}.webp`
     }, []);
 
     if (!item && !money) {
@@ -195,6 +195,11 @@ const Draggable: FunctionComponent<Props> = ({ id, containerName, item, money, i
                         {(item?.shortcut) && (
                             <span className={style.Shortcut}>
                                 {item?.shortcut}
+                            </span>
+                        )}
+                        {(item?.name == "vehicle_key") && (
+                            <span className={style.Key}>
+                                {item?.label.replace("Véhicule ", "")}
                             </span>
                         )}
                         <img

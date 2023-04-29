@@ -76,9 +76,25 @@ class CallsService {
         // Now we can add the call to our memory map
         this.setCallInMap(callObj.transmitter, callObj);
 
+        try {
+            await this.callsDB.saveCall(callObj);
+        } catch (e) {
+            callLogger.error(
+                `Unable to save call object for transmitter number ${transmitterNumber}. Error: ${e.toString()}`
+            );
+            resp({ status: 'error', errorMsg: 'DATABASE_ERROR' });
+        }
+
         // Now if the player is offline, we send the same resp
         // as before
         if (!receivingPlayer) {
+            emitNet(CallEvents.ADD_CALL, reqObj.source, {
+                is_accepted: false,
+                transmitter: transmitterNumber,
+                receiver: reqObj.data.receiverNumber,
+                isTransmitter: true,
+            });
+
             return resp({
                 status: 'ok',
                 data: {
@@ -89,18 +105,6 @@ class CallsService {
                     isUnavailable: true,
                 },
             });
-        }
-
-        callLogger.debug(`Receiving Identifier: ${receiverIdentifier}`);
-        callLogger.debug(`Receiving source: ${receivingPlayer.source} `);
-
-        try {
-            await this.callsDB.saveCall(callObj);
-        } catch (e) {
-            callLogger.error(
-                `Unable to save call object for transmitter number ${transmitterNumber}. Error: ${e.toString()}`
-            );
-            resp({ status: 'error', errorMsg: 'DATABASE_ERROR' });
         }
 
         // At this point we return back to the client that the player contacted
@@ -230,7 +234,9 @@ class CallsService {
         const currentCall = this.callMap.get(transmitterNumber);
 
         if (!currentCall) {
-            callLogger.error(`Call with transmitter number ${transmitterNumber} does not exist in current calls map!`);
+            callLogger.error(
+                `Call with transmitter number ${transmitterNumber} does not exist in current calls map! (reject call)`
+            );
             return;
         }
 
@@ -258,21 +264,27 @@ class CallsService {
         const transmitterCall = this.callMap.get(currentCall?.transmitter);
 
         if (!currentCall) {
-            callLogger.error(`Call with transmitter number ${transmitterNumber} does not exist in current calls map!`);
+            callLogger.error(
+                `Call with transmitter number ${transmitterNumber} does not exist in current calls map! (end call)`
+            );
             return resp({ status: 'error', errorMsg: 'DOES_NOT_EXIST' });
         }
 
         // Just in case currentCall for some reason at this point is falsy
         // lets protect against that
         if (currentCall) {
-            emitNet(CallEvents.WAS_ENDED, currentCall.transmitterSource);
+            if (currentCall.transmitterSource !== null) {
+                emitNet(CallEvents.WAS_ENDED, currentCall.transmitterSource);
+            }
+
             if (
-                (currentCall.receiverSource !== 0 &&
+                currentCall.receiverSource !== null &&
+                ((currentCall.receiverSource !== 0 &&
                     currentCall?.identifier === transmitterCall?.identifier &&
                     currentCall?.is_accepted) ||
-                (currentCall?.identifier === transmitterCall?.identifier &&
-                    currentCall?.is_accepted === false &&
-                    !this.isPlayerAlreadyInCall(transmitterCall?.receiver))
+                    (currentCall?.identifier === transmitterCall?.identifier &&
+                        currentCall?.is_accepted === false &&
+                        !this.isPlayerAlreadyInCall(transmitterCall?.receiver)))
             ) {
                 emitNet(CallEvents.WAS_ENDED, currentCall.receiverSource);
             }

@@ -9,6 +9,8 @@ import { ContactsApp } from '../../../apps/contacts';
 import ContactIcon from '../../../apps/contacts/icon';
 import { DialerApp } from '../../../apps/dialer';
 import DialerIcon from '../../../apps/dialer/icon';
+import { InvoiceApp } from '../../../apps/invoices';
+import InvoiceIcon from '../../../apps/invoices/icon';
 import { MessagesApp } from '../../../apps/messages';
 import MessagesIcon from '../../../apps/messages/icon';
 import { NotesApp } from '../../../apps/notes';
@@ -77,6 +79,13 @@ export const APPS: IAppConfig[] = [
         path: '/notes',
         component: <NotesApp />,
         icon: NotesIcon,
+    },
+    {
+        id: 'invoices',
+        nameLocale: 'APPS_INVOICES',
+        path: '/invoices',
+        component: <InvoiceApp />,
+        icon: InvoiceIcon,
     },
     {
         id: 'society-contacts',

@@ -583,7 +583,8 @@ QBShared.Items = {
         ['ammotype'] = 'AMMO_SHOTGUN',
         ['unique'] = true,
         ['useable'] = false,
-        ['description'] = 'Fusil léger d\'époque, idéal à moyenne distance.'
+        ['description'] = 'Fusil léger d\'époque, idéal à moyenne distance.',
+        ['illustrator'] = '.Poulpito'
     },
     ['weapon_heavyshotgun'] = {
         ['name'] = 'weapon_heavyshotgun',
@@ -1282,7 +1283,7 @@ QBShared.Items = {
         ['shouldClose'] = true,
         ['combinable'] = nil,
         ['description'] = '',
-        ['illustrator'] = '.Poulpito'
+        ['illustrator'] = '.Crash'
     },
     ['ammo_10'] = {
         ['name'] = 'ammo_10',
@@ -1462,6 +1463,12 @@ QBShared.Items = {
             ['protein'] = 1,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'prop_sandwich_01',
+            bone = 60309,
+            coords = { x = 0.05 , y = -0.01, z = -0.01 },
+            rotation = { x = 30.01, y = 0.0, z = 0.0 },
+        },
         ['illustrator'] = '.LeakFlood',
     },
 
@@ -1487,6 +1494,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'ba_prop_club_water_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.06 },
+        },
         ['illustrator'] = '.LeakFlood',
     },
     ['coffee'] = {
@@ -1508,6 +1520,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 0,
+        },
+        ['prop'] = {
+            model = 'prop_fib_coffee',
+            bone = 28422,
+            coords ={ x = 0.01, y = -0.01, z = 0.01 },
         },
         ['illustrator'] = '.Sniteur',
     },
@@ -1672,6 +1689,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 28,
         },
+        ['prop'] = {
+            model = 'prop_wine_red',
+            bone = 28422,
+            coords ={ x = 0.01, y = -0.01, z = -0.18 },
+        },
         ['illustrator'] = '.Omega',
     },
     ['wine2'] = {
@@ -1696,6 +1718,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 28,
+        },
+        ['prop'] = {
+            model = 'prop_wine_white',
+            bone = 28422,
+            coords ={ x = 0.01, y = -0.01, z = -0.18 },
         },
         ['illustrator'] = '.Wyron',
     },
@@ -1722,6 +1749,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 28,
         },
+        ['prop'] = {
+            model = 'prop_wine_bot_02',
+            bone = 28422,
+            coords ={ x = 0.01, y = -0.01, z = -0.18 },
+        },
         ['illustrator'] = '.Wyron',
     },
     ['wine4'] = {
@@ -1746,6 +1778,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 28,
+        },
+        ['prop'] = {
+            model = 'prop_wine_white',
+            bone = 28422,
+            coords ={ x = 0.01, y = -0.01, z = -0.18 },
         },
         ['illustrator'] = '.Wyron',
     },
@@ -1772,6 +1809,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'ba_prop_club_tonic_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+        },
         ['illustrator'] = '.Omega',
     },
     ['grapejuice2'] = {
@@ -1796,6 +1838,11 @@ QBShared.Items = {
             ['sugar'] = 1,
             ['protein'] = 0,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'ba_prop_club_tonic_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
         },
         ['illustrator'] = '.Volkstat',
     },
@@ -1822,6 +1869,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'ba_prop_club_tonic_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+        },
         ['illustrator'] = '.Volkstat',
     },
     ['grapejuice4'] = {
@@ -1847,6 +1899,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'ba_prop_club_tonic_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+        },
         ['illustrator'] = '.Volkstat',
     },
     ['grapejuice5'] = {
@@ -1871,6 +1928,11 @@ QBShared.Items = {
             ['sugar'] = 1,
             ['protein'] = 0,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'ba_prop_club_tonic_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
         },
         ['illustrator'] = '.Volkstat',
     },
@@ -2050,6 +2112,11 @@ QBShared.Items = {
             ['protein'] = 1,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_sausage',
+            bone = 60309,
+            coords = { x = 0.04, y = -0.01, z = -0.01 },
+        },
         ['illustrator'] = '.Volkstat',
     },
     ['sausage2'] = {
@@ -2074,6 +2141,11 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 1,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_sausage',
+            bone = 60309,
+            coords = { x = 0.04, y = -0.01, z = -0.01 },
         },
         ['illustrator'] = '.Volkstat',
     },
@@ -2100,6 +2172,11 @@ QBShared.Items = {
             ['protein'] = 1,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_sausage',
+            bone = 60309,
+            coords = { x = 0.04, y = -0.01, z = -0.01 },
+        },
         ['illustrator'] = '.Volkstat'
     },
     ['sausage4'] = {
@@ -2124,6 +2201,11 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 1,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_sausage',
+            bone = 60309,
+            coords = { x = 0.04, y = -0.01, z = -0.01 },
         },
         ['illustrator'] = '.Volkstat',
     },
@@ -2150,13 +2232,18 @@ QBShared.Items = {
             ['protein'] = 1,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_sausage',
+            bone = 60309,
+            coords = { x = 0.04, y = -0.01, z = -0.01 },
+        },
         ['illustrator'] = '.Volkstat'
     },
     ['milk'] = {
         ['name'] = 'milk',
         ['label'] = 'Pot de lait entier',
         ['weight'] = 3000,
-        ['type'] = 'food',
+        ['type'] = 'drink',
         ['unique'] = false,
         ['useable'] = true,
         ['shouldClose'] = false,
@@ -2173,13 +2260,18 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'prop_cs_milk_01',
+            bone = 28422,
+            coords = { x = 0.03, y = -0.01, z = -0.06 },
+        },
         ['illustrator'] = '.Sniteur',
     },
     ['semi_skimmed_milk'] = {
         ['name'] = 'semi_skimmed_milk',
         ['label'] = 'Pot de lait demi-écrémé',
         ['weight'] = 3000,
-        ['type'] = 'food',
+        ['type'] = 'drink',
         ['unique'] = false,
         ['useable'] = true,
         ['shouldClose'] = false,
@@ -2196,13 +2288,18 @@ QBShared.Items = {
             ['protein'] = 1,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'prop_cs_milk_01',
+            bone = 28422,
+            coords = { x = 0.03, y = -0.01, z = -0.06 },
+        },
         ['illustrator'] = '.Sniteur',
     },
     ['skimmed_milk'] = {
         ['name'] = 'skimmed_milk',
         ['label'] = 'Pot de lait écrémé',
         ['weight'] = 3000,
-        ['type'] = 'food',
+        ['type'] = 'drink',
         ['unique'] = false,
         ['useable'] = true,
         ['shouldClose'] = false,
@@ -2218,6 +2315,11 @@ QBShared.Items = {
             ['sugar'] = 1,
             ['protein'] = 1,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'prop_cs_milk_01',
+            bone = 28422,
+            coords = { x = 0.03, y = -0.01, z = -0.06 },
         },
         ['illustrator'] = '.Sniteur',
     },
@@ -2244,6 +2346,12 @@ QBShared.Items = {
             ['protein'] = 0.5,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
+        },
         ['illustrator'] = '.Volkstat'
     },
     ['cheese2'] = {
@@ -2268,6 +2376,12 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 0.5,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
         },
         ['illustrator'] = '.Freaks'
     },
@@ -2294,6 +2408,12 @@ QBShared.Items = {
             ['protein'] = 0.5,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
+        },
         ['illustrator'] = '.Freaks'
     },
     ['cheese4'] = {
@@ -2318,6 +2438,12 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 0.5,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
         },
         ['illustrator'] = '.Volkstat'
     },
@@ -2344,6 +2470,12 @@ QBShared.Items = {
             ['protein'] = 0.5,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
+        },
         ['illustrator'] = '.Volkstat'
     },
     ['cheese6'] = {
@@ -2368,6 +2500,12 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 0.5,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
         },
         ['illustrator'] = '.Freaks'
     },
@@ -2394,6 +2532,12 @@ QBShared.Items = {
             ['protein'] = 0.5,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
+        },
         ['illustrator'] = '.Freaks'
     },
     ['cheese8'] = {
@@ -2419,6 +2563,12 @@ QBShared.Items = {
             ['protein'] = 0.5,
             ['alcohol'] = 0,
         },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
+        },
         ['illustrator'] = '.Volkstat'
     },
     ['cheese9'] = {
@@ -2443,6 +2593,12 @@ QBShared.Items = {
             ['sugar'] = 0,
             ['protein'] = 0.5,
             ['alcohol'] = 0,
+        },
+        prop = {
+            model = 'soz_prop_food_cheese',
+            bone = 60309,
+            coords = { x = -0.01, y = -0.03, z = -0.01 },
+            rotation = { x = 0.01, y = 330.01, z = 90.01 },
         },
         ['illustrator'] = '.Freaks'
     },
@@ -2816,6 +2972,30 @@ QBShared.Items = {
         ['combinable'] = nil,
         ['description'] = 'L\'outil parfait pour faire infecter un ordinateur'
     },
+	['umbrella'] = {
+        ['name'] = 'umbrella',
+        ['label'] = 'Parapluie',
+        ['weight'] = 600,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = 'Pour rester au sec sous la drache',
+        ['illustrator'] = '.Sniteur'
+    },
+	['protestsign'] = {
+        ['name'] = 'protestsign',
+        ['label'] = 'Pancarte de manifestation',
+        ['weight'] = 600,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = 'Pas content ! Pas content !',
+        ['illustrator'] = '.Poulpito'
+    },
     -- Vehicle Tools
     ['repairkit'] = {
         ['name'] = 'repairkit',
@@ -2999,7 +3179,7 @@ QBShared.Items = {
         ['type'] = 'item',
         ['image'] = 'Défibrillateur.png',
         ['unique'] = false,
-        ['useable'] = true,
+        ['useable'] = false,
         ['shouldClose'] = true,
         ['combinable'] = nil,
         ['description'] = 'Utile pour réanimer',
@@ -3726,6 +3906,54 @@ QBShared.Items = {
         ['description'] = '',
         ['illustrator'] = '.Darabesque'
     },
+    ['car_charger'] = {
+        ['name'] = 'car_charger',
+        ['label'] = "Borne de recharge",
+        ['weight'] = 50000,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = 'Kit d’installation d’une luxueuse borne de recharge idéale aux différentes stations essences de San Andreas.',
+        ['illustrator'] = '.NariieL'
+    },
+    ['lithium_battery'] = {
+        ['name'] = 'lithium_battery',
+        ['label'] = "Batterie lithium-ion",
+        ['weight'] = 25000,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = false,
+        ['shouldClose'] = false,
+        ['combinable'] = nil,
+        ['description'] = 'Idéale afin de réaliser l’entretien d’un véhicule électrique.',
+        ['illustrator'] = '.NariieL'
+    },
+    ['empty_lithium_battery'] = {
+        ['name'] = 'empty_lithium_battery',
+        ['label'] = "Batterie lithium-ion vide",
+        ['weight'] = 25000,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = false,
+        ['shouldClose'] = false,
+        ['combinable'] = nil,
+        ['description'] = "Elle n'a pas l'air de servir à grand chose.",
+        ['illustrator'] = '.NariieL'
+    },
+    ['car_portable_battery'] = {
+        ['name'] = 'car_portable_battery',
+        ['label'] = "Batterie portable",
+        ['weight'] = 10000,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = "Batterie moderne permettant d’être transportée facilement et de recharger en cas d’urgence n’importe quel véhicule électrique.",
+        ['illustrator'] = '.NariieL'
+    },
 
     -- zkea
     ['house_map'] = {
@@ -3984,6 +4212,12 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 16,
         },
+        prop = {
+            model = 'prop_vodka_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
+        },
         illustrator = ".Kutz"
     },
     gin = {
@@ -4007,6 +4241,12 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 16,
         },
+        prop = {
+            model = 'prop_tequila_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
+        },
     },
     tequila = {
         name = 'tequila',
@@ -4028,6 +4268,12 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 16,
+        },
+        prop = {
+            model = 'prop_tequila_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
         },
         illustrator = ".Kutz"
     },
@@ -4052,6 +4298,12 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 16,
         },
+        prop = {
+            model = 'prop_whiskey_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
+        },
         illustrator = ".Kutz"
     },
     cognac = {
@@ -4075,6 +4327,12 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 16,
         },
+        prop = {
+            model = 'prop_bottle_cognac',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
+        },
         illustrator = ".Kutz"
     },
     rhum = {
@@ -4097,6 +4355,12 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 16,
+        },
+        prop = {
+            model = 'prop_rum_bottle',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.12 },
+            rotation = { x = 0.01, y = 0.01, z = 90.01 },
         },
         illustrator = ".Kutz"
     },
@@ -4284,6 +4548,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 8,
         },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
+        },
         illustrator = ".Kutz"
     },
     lapicolada = {
@@ -4306,6 +4575,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 8,
+        },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
         },
         illustrator = ".Smogogo"
     },
@@ -4330,6 +4604,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 8,
         },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
+        },
         illustrator = ".Smogogo"
     },
     ponche = {
@@ -4352,6 +4631,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 8,
+        },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
         },
         illustrator = ".Kutz"
     },
@@ -4376,6 +4660,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 8,
         },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
+        },
         illustrator = ".Smogogo"
     },
     phasmopolitan = {
@@ -4398,6 +4687,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 8,
+        },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
         },
         illustrator = ".Smogogo"
     },
@@ -4422,6 +4716,11 @@ QBShared.Items = {
             ['protein'] = 0,
             ['alcohol'] = 8,
         },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
+        },
         illustrator = ".Kutz"
     },
     whicanelle = {
@@ -4444,6 +4743,11 @@ QBShared.Items = {
             ['sugar'] = 0.5,
             ['protein'] = 0,
             ['alcohol'] = 8,
+        },
+        prop = {
+            model = 'prop_shots_glass_cs',
+            bone = 28422,
+            coords = { x = 0.01, y = -0.01, z = -0.01 },
         },
         illustrator = ".Kutz"
     },
@@ -5971,6 +6275,169 @@ QBShared.Items = {
         ['shouldClose'] = true,
         ['combinable'] = nil,
         ['description'] = "Quelqu'un est passé par là et à tout déchiré...",
+        ['illustrator'] = '.Poulpito'
+    },
+    ['golden_egg'] = {
+        ['name'] = 'golden_egg',
+        ['label'] = "Œuf d'or",
+        ['weight'] = 1200,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = false,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = "Orné de gravures et d'incrustations précieuses, cet œuf en or est un objet précieux et rare qui est souvent associé à la prospérité. Tu as de la chance de l'avoir !",
+        ['illustrator'] = '.Poulpito'
+    },
+    ['chocolate_bunny'] = {
+        ['name'] = 'chocolate_bunny',
+        ['label'] = "Lapin en chocolat",
+        ['weight'] = 300,
+        ['type'] = 'food',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['durability'] = 14,
+        ['description'] = "Délicieuse gourmandise sucrée fabriqué à partir de chocolat au lait, blanc ou noir et est moulé dans la forme d'un lapin.",
+        ['nutrition'] = {
+            ['hunger'] = 15,
+            ['thirst'] = 0,
+            ['stamina'] = 0,
+            ['fiber'] = 0,
+            ['lipid'] = 5,
+            ['sugar'] = 10,
+            ['protein'] = 0,
+            ['alcohol'] = 0,
+        },
+        ['illustrator'] = '.Poulpito'
+    },
+    ['easter_basket'] = {
+        ['name'] = 'easter_basket',
+        ['label'] = "Panier de Pâques",
+        ['weight'] = 500,
+        ['type'] = 'food',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['durability'] = 14,
+        ['description'] = "Objet décoratif traditionnel utilisé pour collecter et contenir des œufs de Pâques. Celui-ci est fabriqué à partir de matériaux naturels tels que de l'osier. De nombreux oeufs de pâques sont prêts à être manger à l'intérieur.",
+        ['nutrition'] = {
+            ['hunger'] = 50,
+            ['thirst'] = 0,
+            ['stamina'] = 0,
+            ['fiber'] = 0,
+            ['lipid'] = 15,
+            ['sugar'] = 30,
+            ['protein'] = 0,
+            ['alcohol'] = 0,
+        },
+        ['illustrator'] = '.Poulpito'
+    },
+    ['stuffed_rabbit'] = {
+        ['name'] = 'stuffed_rabbit',
+        ['label'] = "Peluche 'Lapin'",
+        ['weight'] = 150,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = false,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = "Cette peluche est faite d'un tissu doux et moelleux, et sa forme représente celle d'un lapin, avec de grandes oreilles et une queue moelleuse. Sa mignonnerie vous détend et vous rend tout doux !",
+        ['illustrator'] = '.Poulpito'
+    },
+    ['easter_bell'] = {
+        ['name'] = 'easter_bell',
+        ['label'] = "Cloche de Pâques",
+        ['weight'] = 2500,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = false,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = "Traditionnellement utilisé pour annoncer l'arrivée de Pâques, cette cloche vous rappel de bons souvenirs. Son poids est cependant étonnamment important.",
+        ['illustrator'] = '.Poulpito'
+    },
+    ['chocolat_bread'] = {
+        ['name'] = 'chocolat_bread',
+        ['label'] = "Pain au chocolatine",
+        ['weight'] = 200,
+        ['type'] = 'food',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['durability'] = 14,
+        ['description'] = "Tendre et moelleux, cette viennoiserie à la pâte feuilletée vous fait succuber. Mais attendez... Quel est ce nom ? Serait-ce un mix entre un Pain au Chocolat et une Chocolatine ?!....",
+        ['nutrition'] = {
+            ['hunger'] = 15,
+            ['thirst'] = 0,
+            ['stamina'] = 0,
+            ['fiber'] = 0,
+            ['lipid'] = 3,
+            ['sugar'] = 8,
+            ['protein'] = 0,
+            ['alcohol'] = 0,
+        },
+        ['illustrator'] = '.Poulpito'
+    },
+    ['chocolat_egg'] = {
+        ['name'] = 'chocolat_egg',
+        ['label'] = "Œuf en chocolat",
+        ['weight'] = 50,
+        ['type'] = 'food',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['durability'] = 14,
+        ['description'] = "Elle est sexy, raffinée (sexy, raffinée) ! Chocolat, cho-cho-cho-chocolat.",
+        ['nutrition'] = {
+            ['hunger'] = 5,
+            ['thirst'] = 0,
+            ['stamina'] = 0,
+            ['fiber'] = 0,
+            ['lipid'] = 1,
+            ['sugar'] = 3,
+            ['protein'] = 0,
+            ['alcohol'] = 0,
+        },
+        ['illustrator'] = '.Poulpito'
+    },
+    ['chocolat_milk_egg'] = {
+        ['name'] = 'chocolat_milk_egg',
+        ['label'] = "Œuf en chocolat au lait",
+        ['weight'] = 50,
+        ['type'] = 'food',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['durability'] = 14,
+        ['description'] = "Elle est sexy, raffinée (sexy, raffinée) ! Chocolat, cho-cho-cho-chocolat au lait !",
+        ['nutrition'] = {
+            ['hunger'] = 5,
+            ['thirst'] = 0,
+            ['stamina'] = 0,
+            ['fiber'] = 0,
+            ['lipid'] = 1,
+            ['sugar'] = 3,
+            ['protein'] = 0,
+            ['alcohol'] = 0,
+        },
+        ['illustrator'] = '.Poulpito'
+    },
+    ['bunny_ear'] = {
+        ['name'] = 'bunny_ear',
+        ['label'] = "Oreille de lapin.e",
+        ['weight'] = 100,
+        ['type'] = 'item',
+        ['unique'] = false,
+        ['useable'] = true,
+        ['shouldClose'] = true,
+        ['combinable'] = nil,
+        ['description'] = "Mignonne paire d'oreilles de lapin.e ! Idéale pour... Mmmmh.",
         ['illustrator'] = '.Poulpito'
     },
 }
